@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Leaf Template</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .check-leaf {
+            width: 700px;
+            border: 2px solid #000;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .check-header, .check-body, .check-footer {
+            margin-bottom: 20px;
+        }
+        .bank-details {
+            float: left;
+        }
+        .check-number {
+            float: right;
+        }
+        .check-header:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        .check-number p {
+            margin: 0;
+            font-weight: bold;
+        }
+        .payee, .amount, .date, .signature {
+            margin: 10px 0;
+        }
+        .underline {
+            display: inline-block;
+            width: 300px;
+            border-bottom: 1px solid #000;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        .date, .signature {
+            display: inline-block;
+            width: 48%;
+        }
+        .signature {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="check-leaf">
+        <div class="check-header">
+            <div class="bank-details">
+                <h2>{{ bank_name }}</h2>
+                <p>{{ bank_address_line1 }}</p>
+                <p>{{ bank_address_line2 }}</p>
+            </div>
+            <div class="check-number">
+                <p>Check No: <span>{{ check_number }}</span></p>
+            </div>
+        </div>
+        <div class="check-body">
+            <div class="payee">
+                <p>Pay to the Order of: <span class="underline">{{ payee_name }}</span></p>
+            </div>
+            <div class="amount">
+                <p>The sum of: <span class="underline">{{ amount }}</span></p>
+            </div>
+        </div>
+        <div class="check-footer">
+            <div class="date">
+                <p>Date: <span class="underline">{{ date }}</span></p>
+            </div>
+            <div class="signature">
+                <p>Signature: <span class="underline">____________________</span></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

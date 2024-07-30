@@ -1,0 +1,404 @@
+
+{% extends "base.html" %}
+
+{% load static%}
+
+{% block home %}
+
+<!-- ***** Header Area End ***** -->
+
+<div class="main-banner" id="top">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="owl-carousel owl-banner">
+                    <div class="item item-1">
+                        <div class="header-text">
+                            <span class="category">Find Scholarships</span>
+                            <h2>Unlock Your Academic Potential with Our Support</h2>
+                            <p>Scholar Hub connects students with numerous scholarship opportunities. Our platform simplifies the search and application process, helping you achieve your educational goals with ease.</p>
+                            <div class="buttons">
+                      
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item item-2">
+                        <div class="header-text">
+                            <span class="category">Application Assistance</span>
+                            <h2>Receive Expert Guidance on Your Scholarship</h2>
+                            <p>Our dedicated team offers personalized support to enhance your scholarship applications. Get the help you need to craft compelling submissions and increase your chances of success.</p>
+                    
+                        </div>
+                    </div>
+                    <div class="item item-3">
+                        <div class="header-text">
+                            <span class="category">Educational Resources</span>
+                            <h2>Access Valuable Resources for Your Academic Journey</h2>
+                            <p>Discover a range of resources designed to support your education. From funding information to application tips, Scholar Hub is your go-to platform for comprehensive academic assistance.</p>
+                    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="services section" id="services">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6">
+                <div class="service-item">
+                    <div class="icon">
+                        <img src="{% static 'images/service-01.png'%}" alt="scholarship search">
+                    </div>
+                    <div class="main-content">
+                        <h4>Scholarship Search</h4>
+                        <p>Find a wide range of scholarship opportunities tailored to your educational goals and needs. Our platform helps you easily locate and apply for scholarships that match your profile.</p>
+                        <div class="main-button">
+                            <a href="#">Explore Opportunities</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="service-item">
+                    <div class="icon">
+                        <img src="{% static 'images/service-02.png'%}" alt="application support">
+                    </div>
+                    <div class="main-content">
+                        <h4>Application Support</h4>
+                        <p>Get personalized assistance with your scholarship applications. Our team provides guidance and support to help you submit strong applications and improve your chances of success.</p>
+                        <div class="main-button">
+                            <a href="#">Get Support</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="service-item">
+                    <div class="icon">
+                        <img src="{% static 'images/service-03.png'%}" alt="funding resources">
+                    </div>
+                    <div class="main-content">
+                        <h4>Funding Resources</h4>
+                        <p>Access a variety of resources to help fund your education. From scholarship opportunities to financial aid advice, we provide tools and information to support your academic journey.</p>
+                        <div class="main-button">
+                            <a href="#">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="d-flex justify-content-center">
+    <a class="btn text-white p-3 fs-3 fw-bold" style="background-color: #7a6ad8;" href="{% url 'cat_sc'%}">Explore Scholarships</a>
+</div>
+
+<div class="section about-us">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-1">
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                How can I apply for scholarships?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                            data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                Applying for scholarships is simple. <strong>Sign up</strong> on our platform, complete your profile, and browse through the available scholarships. Once you find one that matches your qualifications, follow the application instructions provided.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                What are the eligibility criteria?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                            data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                Each scholarship has specific eligibility criteria, which may include academic achievements, extracurricular activities, and financial need. Make sure to read the requirements carefully before applying to ensure you meet all the criteria.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Why choose Scholar Hub for scholarships?
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                            data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                Scholar Hub offers a comprehensive and user-friendly platform for finding and applying for scholarships. Our extensive database and personalized recommendations ensure that you have access to the best opportunities tailored to your profile.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                How can I get support during the application process?
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
+                            data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                Our support team is here to help you with any questions or issues you may encounter during the application process. You can reach out to us via email or phone, and we'll provide the assistance you need to successfully apply for scholarships.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 align-self-center">
+                <div class="section-heading">
+                    <h6>About Us</h6>
+                    <h2>Why Scholar Hub is your go-to platform for scholarships?</h2>
+                    <p>At Scholar Hub, we are dedicated to connecting students with the financial resources they need to achieve their academic goals. Our platform simplifies the scholarship search and application process, making it easier than ever to find funding opportunities.</p>
+                    <div class="main-button">
+                        <a href="#">Discover More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 
+<section class="section courses" id="courses">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="section-heading">
+                    <h6>Latest Courses</h6>
+                    <h2>Latest Courses</h2>
+                </div>
+            </div>
+        </div>
+        <ul class="event_filter">
+            <li>
+                <a class="is_active" href="#!" data-filter="*">Show All</a>
+            </li>
+            <li>
+                <a href="#!" data-filter=".design">Webdesign</a>
+            </li>
+            <li>
+                <a href="#!" data-filter=".development">Development</a>
+            </li>
+            <li>
+                <a href="#!" data-filter=".wordpress">Wordpress</a>
+            </li>
+        </ul>
+        <div class="row event_box">
+            <div class="col-lg-4 col-md-6 align-self-center mb-30 event_outer col-md-6 design">
+                <div class="events_item">
+                    <div class="thumb">
+                        <a href="#"><img src="assets/images/course-01.jpg" alt=""></a>
+                        <span class="category">Webdesign</span>
+                        <span class="price">
+                            <h6><em>$</em>160</h6>
+                        </span>
+                    </div>
+                    <div class="down-content">
+                        <span class="author">Stella Blair</span>
+                        <h4>Learn Web Design</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 align-self-center mb-30 event_outer col-md-6  development">
+                <div class="events_item">
+                    <div class="thumb">
+                        <a href="#"><img src="assets/images/course-02.jpg" alt=""></a>
+                        <span class="category">Development</span>
+                        <span class="price">
+                            <h6><em>$</em>340</h6>
+                        </span>
+                    </div>
+                    <div class="down-content">
+                        <span class="author">Cindy Walker</span>
+                        <h4>Web Development Tips</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 align-self-center mb-30 event_outer col-md-6 design wordpress">
+                <div class="events_item">
+                    <div class="thumb">
+                        <a href="#"><img src="assets/images/course-03.jpg" alt=""></a>
+                        <span class="category">Wordpress</span>
+                        <span class="price">
+                            <h6><em>$</em>640</h6>
+                        </span>
+                    </div>
+                    <div class="down-content">
+                        <span class="author">David Hutson</span>
+                        <h4>Latest Web Trends</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 align-self-center mb-30 event_outer col-md-6 development">
+                <div class="events_item">
+                    <div class="thumb">
+                        <a href="#"><img src="assets/images/course-04.jpg" alt=""></a>
+                        <span class="category">Development</span>
+                        <span class="price">
+                            <h6><em>$</em>450</h6>
+                        </span>
+                    </div>
+                    <div class="down-content">
+                        <span class="author">Stella Blair</span>
+                        <h4>Online Learning Steps</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 align-self-center mb-30 event_outer col-md-6 wordpress development">
+                <div class="events_item">
+                    <div class="thumb">
+                        <a href="#"><img src="assets/images/course-05.jpg" alt=""></a>
+                        <span class="category">Wordpress</span>
+                        <span class="price">
+                            <h6><em>$</em>320</h6>
+                        </span>
+                    </div>
+                    <div class="down-content">
+                        <span class="author">Sophia Rose</span>
+                        <h4>Be a WordPress Master</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 align-self-center mb-30 event_outer col-md-6 wordpress design">
+                <div class="events_item">
+                    <div class="thumb">
+                        <a href="#"><img src="assets/images/course-06.jpg" alt=""></a>
+                        <span class="category">Webdesign</span>
+                        <span class="price">
+                            <h6><em>$</em>240</h6>
+                        </span>
+                    </div>
+                    <div class="down-content">
+                        <span class="author">David Hutson</span>
+                        <h4>Full Stack Developer</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> -->
+
+<div class="section fun-facts">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="wrapper">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="counter">
+                                <h2 class="timer count-title count-number" data-to="1150" data-speed="1000"></h2>
+                                <p class="count-text ">Happy Students</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="counter">
+                                <h2 class="timer count-title count-number" data-to="804" data-speed="1000"></h2>
+                                <p class="count-text ">ScolarShips</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="counter">
+                                <h2 class="timer count-title count-number" data-to="110" data-speed="1000"></h2>
+                                <p class="count-text ">Scholar Ship Providers</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="counter end">
+                                <h2 class="timer count-title count-number" data-to="15" data-speed="1000"></h2>
+                                <p class="count-text ">Years Experience</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="section testimonials">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="owl-carousel owl-testimonials">
+                    <div class="item">
+                        <p>"Thanks to Scholar Hub, I was able to secure a scholarship that covered my entire tuition fee. The platform made it easy to find and apply for scholarships that matched my profile. I couldn't be more grateful!"</p>
+                        <div class="author">
+                            <img src="{% static 'images/testimonial-author.jpg' %}" alt="">
+                            <span class="category">Scholarship Recipient</span>
+                            <h4>Emily R</h4>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <p>"Scholar Hub connected me with funding opportunities that I never knew existed. Their support and resources have been invaluable in advancing my research and achieving my academic goals."
+
+                        </p>
+                        <div class="author">
+                            <img src="{% static 'images/testimonial-author.jpg' %}" alt="">
+                            <span class="category">Researcher</span>
+                            <h4>sona Jefferson</h4>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <p>"Collaborating with Scholar Hub has been a fantastic experience. The platform not only provides scholarships but also fosters a community of passionate learners and educators. It's truly a hub for academic excellence."</p>
+                        <div class="author">
+                            <img src="{% static 'images/testimonial-author.jpg' %}" alt="">
+                            <span class="category">Educator</span>
+                            <h4>Stella Blair</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 align-self-center">
+                <div class="section-heading">
+                    <h6>TESTIMONIALS</h6>
+                    <h2>What they say about us?</h2>
+                    <p>Discover what our community of students, educators, and researchers has to say about Scholar Hub. Their experiences and success stories are a testament to our commitment to providing valuable scholarship opportunities and academic support. Join our platform and become part of a network that fosters growth, learning, and collaboration.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="contact-us section" id="contact">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6  align-self-center">
+                <div class="section-heading">
+                    <h6>Contact Us</h6>
+                    <h2>Feel free to contact us anytime</h2>
+                    <p>For any other questions or assistance, please do not hesitate to contact us. We are always here to help.
+                        Email: scholarships@scholarhub.com
+Phone: +123-456-7890
+Address: Ayoor, kollam, kerala
+                    </p>
+                    <!-- <div class="special-offer">
+                        <span class="offer">off<br><em>50%</em></span>
+                        <h6>Valide: <em>24 April 2036</em></h6>
+                        <h4>Special Offer <em>50%</em> OFF!</h4>
+                        <a href="#"><i class="fa fa-angle-right"></i></a>
+                    </div> -->
+                </div>
+            </div>
+       
+        </div>
+    </div>
+</div>
+
+
+{% endblock home %}

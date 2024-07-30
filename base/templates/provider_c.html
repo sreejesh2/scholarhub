@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block home %}
+
+   <div class="container" style="margin-top: 150px;">
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col-10" >
+        <div class="contact-us-content">
+            {% for msg in messages %}
+            {% if msg.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>{{msg}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% else %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>{{msg}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+            {% endfor %}
+            <h1>Scholar Ship Provider Create Form</h1>
+        
+            <form method="post" class="border border-3 p-4 rounded shadow my-2">
+                {% csrf_token %}
+                {{ form.as_ul }}
+                <button type="submit" class="btn btn-success mt-3">Submit</button>
+            </form>
+        </div>
+    </div>
+      <div class="col-1"></div>
+    </div>
+   </div>
+
+   <script>
+    $(document).ready(function(){
+        $('#id_dob').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true
+        });
+    });
+</script>
+{% endblock home %}

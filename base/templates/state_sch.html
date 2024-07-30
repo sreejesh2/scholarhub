@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+{% block home %}
+
+<div class="container" style="margin-top: 150px;min-height:50vh;">
+    <div class="row">
+
+        <div class="col-12">
+            <div class="contact-us-content">
+                {% for msg in messages %}
+                {% if msg.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>{{msg}}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% else %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>{{msg}}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endif %}
+                {% endfor %}
+                <h1 class="text-center">State Government Scholarships</h1>
+
+                <div class="section events" id="events">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12 text-center">
+
+                            </div>
+
+                            {% for s in scholarships %}
+                            <div class="col-lg-12 col-md-6">
+                                <div class="item">
+                                    <div class="row">
+                                    
+                                        <div class="col-lg-12">
+                                            <ul>
+                                                <li>
+                                                    <span class="category">{{s.state.name}}</span>
+                                                    <h4>{{s.title}}</h4>
+                                                </li>
+                                                <li>
+                                                    <span>Start Date:</span>
+                                                    <h6>{{s.start_date}}</h6>
+                                                </li>
+                                                <li>
+                                                    <span>End Date:</span>
+                                                    <h6>{{s.end_date}}</h6>
+                                                </li>
+                                            
+                                                <li>
+                                                    <span>Price:</span>
+                                                    <h6>{{s.amount}}</h6>
+                                                </li>
+                                            </ul>
+                                            {% if current_date >= s.start_date and current_date <= s.end_date %}
+                                            <a class="px-2" href="{% url 'apply-scholarship' s.id %}">Apply</a>
+                                        {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="row ms-4 mt-3">
+                                        <h5>( Eligibility )</h5>
+                                        <p>Education level: {{ s.get_education_level_display }}</p>
+                                        <p>Cast: {{ s.get_cast_display }}</p>
+                                        <p>Disability: {{ s.get_disability_display }}</p>
+                                        <p>GPA: {{ s.gpa }}</p>
+                                        <p>Description: {{ s.description }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                       
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#id_dob').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true
+        });
+    });
+</script>
+{% endblock home %}

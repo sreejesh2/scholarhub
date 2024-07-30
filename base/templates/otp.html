@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block home %}
+<div class="container" style="margin-top: 150px; height: 50vh;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            {% for msg in messages %}
+            {% if msg.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>{{msg}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% else %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>{{msg}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+            {% endfor %}
+            <h1 class="text-center my-5">Enter Your OTP</h1>
+            <div class="d-flex justify-content-center">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group d-flex">
+                        <input type="number" name="num1" style="text-decoration: none;" class="form-control otp-input mx-1 text-center" maxlength="1">
+                        <input type="number" name="num2" style="text-decoration: none;" class="form-control otp-input mx-1 text-center" maxlength="1">
+                        <input type="number" name="num3" style="text-decoration: none;" class="form-control otp-input mx-1 text-center" maxlength="1">
+                        <input type="number" name="num4" style="text-decoration: none;" class="form-control otp-input mx-1 text-center" maxlength="1">
+                        <input type="number" name="num5" style="text-decoration: none;" class="form-control otp-input mx-1 text-center" maxlength="1">
+                        <input type="number" name="num6" style="text-decoration: none;" class="form-control otp-input mx-1 text-center" maxlength="1">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-3">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .otp-input {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        margin: 5px;
+        -moz-appearance: textfield;
+    }
+
+    /* Hide the arrows for WebKit-based browsers (Chrome, Safari, Edge) */
+    .otp-input::-webkit-outer-spin-button,
+    .otp-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Hide the arrows for Firefox */
+    .otp-input[type=number] {
+        -moz-appearance: textfield;
+    }
+</style>
+
+{% endblock home %}
