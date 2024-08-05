@@ -44,7 +44,7 @@
 
                         </a>
 
-                        <a data-bs-toggle="collse" href="#dashboard" class="collapsed" aria-expanded="false">
+                        <a data-bs-toggle="collse" href="{% url 'cas'%}" class="collapsed" aria-expanded="false">
                             <i class="fas fa-home"></i>
                             <p>Central Gov Applied Students</p>
 
@@ -196,8 +196,8 @@
                                           Change Status
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                          <li><a class="dropdown-item"  href="{% url 'st_s' pk=r.id status='approved' %}">Approved</a></li>
-                                          <li><a class="dropdown-item"  href="{% url 'st_s' pk=r.id status='rejected' %}">Rejected</a></li>
+                                          <li><a class="dropdown-item"  href="{% url 'st_s' a_id=r.id status='approved' %}">Approved</a></li>
+                                          <li><a class="dropdown-item"  href="{% url 'st_s' a_id=r.id status='rejected' %}">Rejected</a></li>
                                         
                                         </ul>
                                       </div>

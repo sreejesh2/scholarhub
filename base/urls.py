@@ -37,6 +37,10 @@ urlpatterns = [
     path('process_payment/<int:a_id>/', views.ProcessPaymentView.as_view(), name='process_payment'),
     path('payment_success/', views.payment_success, name='payment_success'),
     path('payment_failure/', views.payment_failure, name='payment_failure'),
+    path('edit-profile/', views.user_edit, name='user_edit'),
+    path('cental/state/approved/<int:s_id>/',views.state_approved_students_central,name='c_s_a'),
+    path('adminp/rejected/',views.admin_rejected,name='admin_r'),
+    path('adminp/approved/',views.admin_approved,name='admin_a'),
 
 
 

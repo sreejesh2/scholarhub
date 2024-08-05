@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .form import UserForm,LoginForm,ScholarShipProviderForm,ProviderLoginForm,ApplyScholarShipForm,StudentIDForm,ScholarShipForm,StudentsForm,StudentRegisterForm
+from .form import UserForm,LoginForm,ScholarShipProviderForm,ProviderLoginForm,ApplyScholarShipForm,StudentIDForm,ScholarShipForm,StudentsForm,StudentRegisterForm,StudentEditForm
 from rest_framework.response import Response
 from .serializers import UserSerializer,ScholarShipProviderSerializer,ScholarShipSerializer,ApplyScholarShipSerializer,SApplyScholarShipSerializer,ApplyScholarShipStatusSerializer
 from rest_framework.decorators import api_view, permission_classes
@@ -514,26 +514,44 @@ def notify(request):
 def recommendation(request):
     if request.user.is_authenticated:
         scholarships = ScholarShip.objects.all()
+        current_date = timezone.now().date()
 
         if request.user.is_student:
             # Create a list of Q objects for filtering
             filters = Q()
+            exact_match = True
+
             if request.user.education_level:
-                filters |= Q(education_level__gte=request.user.education_level)
+                filters &= Q(education_level=request.user.education_level)
+            else:
+                exact_match = False
+
             if request.user.cast:
-                filters |= Q(cast=request.user.cast)  
+                filters &= Q(cast=request.user.cast)
+            else:
+                exact_match = False
+
             if request.user.disability:
-                filters |= Q(disability=request.user.disability)  
+                filters &= Q(disability=request.user.disability)
+            else:
+                exact_match = False
+
             if request.user.gpa:
-                filters |= Q(gpa__gte=request.user.gpa)
+                filters &= Q(gpa__lte=request.user.gpa)
+            else:
+                exact_match = False
 
-            # Exclude institution-based scholarships and apply filters
-            scholarships = scholarships.exclude(provider__provider_type='institution').filter(filters)
-            current_date = timezone.now().date()
+            # Apply filters only if exact match is required
+            if exact_match:
+                scholarships = scholarships.exclude(provider__provider_type='institution').filter(filters)
+            else:
+                scholarships = scholarships.none()  # No exact match found
 
-        return render(request, 'recommendations.html', {'scholarships': scholarships,'current_date':current_date})
+        return render(request, 'recommendations.html', {'scholarships': scholarships, 'current_date': current_date})
     else:
         return render(request, 'login.html')
+
+
 
 @login_required(login_url='login')
 def profile(request):
@@ -626,9 +644,11 @@ class AppliedScholarships(View):
     def get(self, request, sch_id, *args, **kwargs):
         sch_obj = get_object_or_404(ScholarShip, id=sch_id)
         applied_scholarships = ApplyScholarShip.objects.filter(scholarship=sch_obj)
+        is_institution = (sch_obj.provider and sch_obj.provider.provider_type == 'institution') or False
         return render(request, self.template_name, {
             "apply_sch": applied_scholarships,
             "scholarship": sch_obj,
+            "is_institution": is_institution,
         })
 
 
@@ -884,15 +904,41 @@ def payment_failure(request):
     return render(request, 'payment_failure.html', {'code': code, 'description': description})
 
 
+def state_approved_students_central(request,s_id):
+    provider_id = request.session.get('provider_id') 
+    if not provider_id:
+        messages.error(request, "Session expired. Please log in again.")
+        return redirect('login') 
+    s_obj=ScholarShip.objects.get(id=s_id)
+    applied_students= ApplyScholarShip.objects.filter(state_level='approved',scholarship__central__isnull=False,central_level= 'pending',scholarship=s_obj)
+    return render(request, 'state_approved_students.html', {'applications': applied_students})
+
+@login_required
+def user_edit(request):
+    if request.method == 'POST':
+        form = StudentEditForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')  # Redirect to the profile page after saving
+    else:
+        form = StudentEditForm(instance=request.user)
+    
+    return render(request, 'user_edit.html', {'form': form})
+
+
+def admin_rejected(request):
+    if not request.user.is_staff:
+        return redirect('login')  # Redirect non-staff users to login or some other appropriate view
+    rq = ScholarShipProvider.objects.filter(status = 'R').order_by('-id')
+    return render(request, 'admin_r.html', {"rq": rq})
 
 
 
-
-
-
-
-
-
+def admin_approved(request):
+    if not request.user.is_staff:
+        return redirect('login')  # Redirect non-staff users to login or some other appropriate view
+    rq = ScholarShipProvider.objects.filter(status = 'A').order_by('-id')
+    return render(request, 'admin_a.html', {"rq": rq})
 
 
 

@@ -43,35 +43,41 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                  <nav class="main-nav">
-                    <!-- ***** Logo Start ***** -->
-                    <a href="{% url 'home' %}" class="logo">
-                        <h1>Scholar&nbsp;Hub</h1>
-                    </a>
-                    <!-- ***** Logo End ***** -->
-                    <!-- ***** Menu Start ***** -->
-                    <ul class="nav">
-                        <li class="scroll-to-section"><a href="{% url 'home' %}" class="active fw-bold">Home</a></li>
-                
-                        {% if not request.user.is_authenticated or not request.user.is_student %}
-                            <li class="scroll-to-section">
-                                <div class="dropdown">
-                                    <button class="btn border-0 text-white dropdown-toggle" type="button"
-                                        id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Services
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <li><a class="dropdown-item text-dark" href="{% url 'provider_c' %}">Request for Service Provider</a></li>
-                                    </ul>
-                                </div>
+                    <nav class="main-nav">
+                        <!-- ***** Logo Start ***** -->
+                        <a href="{% url 'home' %}" class="logo">
+                            <h1>Scholar&nbsp;Hub</h1>
+                        </a>
+                        <!-- ***** Logo End ***** -->
+                        <!-- ***** Menu Start ***** -->
+                        <ul class="nav">
+                            <li class="scroll-to-section"><a href="{% url 'home' %}" class="active fw-bold">Home</a>
                             </li>
-                        {% endif %}
-                
-                        {% if request.user.is_authenticated %}
-                            {% if request.user.is_student %}
-                                <li class="scroll-to-section"><a href="{% url 'cat_sc' %}" class="active fw-bold">Explore Scholarships</a></li>
+
+                            {% if not request.user.is_authenticated or not request.user.is_student %}
+
+                         {% if not request.user.is_staff %}
+                         <li class="scroll-to-section">
+                            <div class="dropdown">
+                                <button class="btn border-0 text-white dropdown-toggle" type="button"
+                                    id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Services
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item text-dark" href="{% url 'provider_c' %}">Request for
+                                            Service Provider</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                         {%endif%}
                             {% endif %}
-                
+
+                            {% if request.user.is_authenticated %}
+                            {% if request.user.is_student %}
+                            <li class="scroll-to-section"><a href="{% url 'cat_sc' %}" class="active fw-bold">Explore
+                                    Scholarships</a></li>
+                            {% endif %}
+
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle text-white" data-bs-toggle="dropdown">
                                     {{ request.user.full_name }}
@@ -81,40 +87,43 @@
                                     <a href="{% url 'logout' %}" class="dropdown-item">Logout</a>
                                 </div>
                             </div>
-                
+
                             {% if request.user.is_student %}
-                                <li class="scroll-to-section">
-                                    <a href="{% url 'recom' %}" title="Recommended Scholarships">
-                                        <i class="fa-solid fa-star"></i>
-                                    </a>
-                                </li>
-                            {% endif %}
-                
                             <li class="scroll-to-section">
-                                <a href="{% url 'notify' %}"><i class="fa-solid fa-bell fs-4"></i></a>
+                                <a href="{% url 'recom' %}" title="Recommended Scholarships">
+                                    <i class="fa-solid fa-star"></i>
+                                </a>
                             </li>
-                
-                            {% if unread_logs_count > 0 %}
-                                <div class="text-white bg-danger fw-bold p-2" style="border-radius: 60%; width: 25px; height: 25px; display: flex; justify-content: center; align-items: center; position: absolute; top: -10px;">
-                                    {{ unread_logs_count }}
-                                </div>
                             {% endif %}
-                
+
+                           {% if not request.user.is_staff %}
+                           <li class="scroll-to-section">
+                            <a href="{% url 'notify' %}"><i class="fa-solid fa-bell fs-4"></i></a>
+                        </li>
+
+                        {% if unread_logs_count > 0 %}
+                        <div class="text-white bg-danger fw-bold p-2"
+                            style="border-radius: 60%; width: 25px; height: 25px; display: flex; justify-content: center; align-items: center; position: absolute; top: -10px;">
+                            {{ unread_logs_count }}
+                        </div>
+                        {% endif %}
+                           {% endif %}
+
                             {% if request.user.is_staff %}
-                                <li class="scroll-to-section"><a href="{% url 'adminp' %}">Admin Panel</a></li>
+                            <li class="scroll-to-section"><a href="{% url 'adminp' %}">Admin Panel</a></li>
                             {% endif %}
-                
-                        {% else %}
+
+                            {% else %}
                             <li class="scroll-to-section"><a href="{% url 'login' %}">Login</a></li>
                             <li class="scroll-to-section"><a href="{% url 'pre_reg' %}">Register Now!</a></li>
-                        {% endif %}
-                    </ul>
-                    <a class='menu-trigger'>
-                        <span>Menu</span>
-                    </a>
-                    <!-- ***** Menu End ***** -->
-                </nav>
-                
+                            {% endif %}
+                        </ul>
+                        <a class='menu-trigger'>
+                            <span>Menu</span>
+                        </a>
+                        <!-- ***** Menu End ***** -->
+                    </nav>
+
                 </div>
             </div>
         </div>

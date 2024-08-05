@@ -28,21 +28,27 @@
             <div class="sidebar-content">
                 <ul class="nav nav-secondary">
                     <li class="nav-item active">
-                        <a data-bs-toggle="collae" href="{% url 'ad_sc'%}" class="collapsed" aria-expanded="false">
+                        <a data-bs-toggle="colpse" href="{% url 'adminp'%}" class="collased" aria-expanded="false">
                             <i class="fas fa-home"></i>
-                            <p>Scholar Ships</p>
+                            <p class="">Scholar Ship Provider Requests</p>
 
                         </a>
-                        <a data-bs-toggle="colse" href="{% url 'create_sch'%}" class="collapse" aria-expanded="false">
+                        <a data-bs-toggle="coapse" href="{% url 'admin_a'%}" class="collaped" aria-expanded="false">
                             <i class="fas fa-home"></i>
-                            <p>Create Scholarship</p>
+                            <p class="">Approved Provider List</p>
 
                         </a>
-                        {% comment %} <a data-bs-toggle="colaps" href="#dashboard" class="collapsed" aria-expanded="false">
+                        <a data-bs-toggle="clpse" href="{% url 'admin_r'%}" class="colapsed" aria-expanded="false">
                             <i class="fas fa-home"></i>
-                            <p>Applications</p>
+                            <p class="">Rejected Provider List</p>
 
-                        </a> {% endcomment %}
+                        </a>
+                      
+                        <!-- <a data-bs-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
+                            <i class="fas fa-home"></i>
+                            <p>Dashboard</p>
+
+                        </a> -->
 
                     </li>
 
@@ -82,7 +88,7 @@
             <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
                 <div class="container-fluid">
                     <nav class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex">
-                        <h4>Central Government Panel</h4>
+                        <h4>Admin Panel</h4>
                     </nav>
 
                     <div>
@@ -97,28 +103,37 @@
             <div class="row">
                 <div class="col-12">
 
+
                     <table class="table">
                         <thead>
                             <tr>
                                 <th scope="col">No</th>
                                 <th scope="col">Name</th>
-                                <th scope="col">Amount</th>
-                                <th scope="col">Start Date</th>
-                                <th scope="col">End Date </th>
-                               
+                                <th scope="col">Email</th>
+                                <th scope="col">registration_number</th>
+                                <th scope="col">Phone Number </th>
+                                <th scope="col">Status </th>
                                 <th scope="col">Actions </th>
 
                             </tr>
                         </thead>
                         <tbody>
-                            {% for r in scholarships %}
+                            {% for r in rq %}
                             <tr>
                                 <th scope="row">{{ forloop.counter }}</th>
-                                <td>{{ r.title }}</td>
-                                <td>{{ r.amount }}</td>
-                                <td>{{ r.start_date }}</td>
-                                <td>{{ r.end_date }}</td>
-                             
+                                <td>{{ r.name }}</td>
+                                <td>{{ r.contact_email }}</td>
+                                <td>{{ r.registration_number }}</td>
+                                <td>{{ r.phone_number }}</td>
+                                <td>
+                                    {% if r.status == 'A' %}
+                                    <i class="fa-solid fa-check text-success"></i>
+                                    {% elif r.status == 'R' %}
+                                    <i class="fa-solid fa-x text-danger"></i>
+                                    {% elif r.status == 'P' %}
+                                    <i class="fa-solid fa-clock text-primary"></i>
+                                    {% endif %}
+                                </td>
                                 <td class="d-flex">
                                     <!-- Button trigger modal -->
                                     <button type="button" class="btn btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#modal{{ forloop.counter }}">
@@ -134,16 +149,32 @@
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <p><strong>Name:</strong> {{ r.title }}</p>
+                                                    <p><strong>Name:</strong> {{ r.name }}</p>
                                                     <p><strong>Description:</strong> {{ r.description }}</p>
-                                                    <p><strong>Amounr: </strong>₹ {{ r.amount }}</p>
-                                                    <p><strong>Start Date:</strong> {{ r.start_date }}</p>
-                                                    <p><strong>End Date:</strong> {{ r.end_date }}</p>
-                                                    <p><strong>Educational Level:</strong> {{ r.get_education_level_display }}</p>
-                                                    <p><strong>Cast:</strong> {{ r.get_cast_display }}</p>
-                                                    <p><strong>Disability:</strong> {{ r.get_disability_display }}</p>
-                                                    <p><strong>Gpa</strong> {{ r.gpa }}</p>
-                                                    <a href="{% url 'c_s_a' r.id %} " class="btn btn-info">State Approved Students</a>
+                                                    <p><strong>Website:</strong> <a href="{{ r.website }}" target="_blank">{{ r.website }}</a></p>
+                                                    <p><strong>Email:</strong> {{ r.contact_email }}</p>
+                                                    <p><strong>Registration Number:</strong> {{ r.registration_number }}</p>
+                                                    <p><strong>Year Established:</strong> {{ r.year_established }}</p>
+                                                    <p><strong>Provider Type:</strong> {{ r.get_provider_type_display }}</p>
+                                                    <p><strong>Phone Number:</strong> {{ r.phone_number }}</p>
+                                                    <p><strong>Address:</strong> {{ r.address }}</p>
+                                                    <p><strong>Pin Code:</strong> {{ r.pin_code }}</p>
+                                                    <p><strong>City:</strong> {{ r.city }}</p>
+                                                    <p><strong>Country:</strong> {{ r.country }}</p>
+                                                    <p><strong>Remark:</strong> {{ r.remark }}</p>
+                                                    <p><strong>Status:</strong> 
+                                                        {% if r.status == 'A' %}
+                                                        Approved
+                                                        {% elif r.status == 'R' %}
+                                                        Rejected
+                                                        {% elif r.status == 'P' %}
+                                                        Pending
+                                                        {% endif %}
+                                                    </p>
+                                                    <p><strong>Created At:</strong> {{ r.created_at }}</p>
+                                                    {% if r.image %}
+                                                    <p><strong>Image:</strong> <img src="{{ r.image.url }}" alt="{{ r.name }}" style="max-width: 100%; height: auto;"></p>
+                                                    {% endif %}
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -153,7 +184,15 @@
                                         </div>
                                     </div>
                     
-                                  
+                                    {% comment %} <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ forloop.counter }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Change Status
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ forloop.counter }}">
+                                            <li><a class="dropdown-item" href="{% url 'admin_request' pk=r.id status='A' %}">Approved</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'admin_request' pk=r.id status='R' %}">Rejected</a></li>
+                                        </ul>
+                                    </div> {% endcomment %}
                                 </td>
                             </tr>
                             {% endfor %}

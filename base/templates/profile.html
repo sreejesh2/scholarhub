@@ -38,7 +38,9 @@
                     <p><strong>Disability:</strong> {{ profile.disability }}</p>
                     <p><strong>GPA:</strong> {{ profile.gpa }}</p>
                 {% endif %}
-                <a href="" class="btn btn-warning"> Edit</a>
+                {% request.user.is_student %}
+                <a href="{% url 'user_edit'%}" class="btn btn-warning"> Edit</a>
+                {% endif %}
             </div>
         </div>
     </div>

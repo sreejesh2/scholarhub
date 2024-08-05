@@ -40,6 +40,31 @@ class StudentRegisterForm(forms.ModelForm):
 
         }        
 
+
+
+class StudentEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = [
+            "full_name", "email", "phone", "address", "dob","education_level","cast","disability","gpa"
+        ]
+        widgets = {
+        
+            'full_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter full name'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter email'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter phone number'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter address'}),
+            'dob': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'Select dob', 'id': 'id_dob', 'type': 'date'}),
+            'education_level': forms.Select(choices=ScholarShip.EDU_OP, attrs={'class': 'form-control'}),
+            'cast': forms.Select(choices=ScholarShip.CAST_OP, attrs={'class': 'form-control'}),
+            'disability': forms.Select(choices=ScholarShip.DIS_OP, attrs={'class': 'form-control'}),
+            'gpa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Gpa'}),
+
+        }        
+
+
+
+
 class LoginForm(forms.Form):
    email=forms.CharField(widget=forms.TextInput(attrs={"class":"form-control",'placeholder': 'Enter email'}))
    password=forms.CharField(widget=forms.PasswordInput(attrs={"class":"form-control",'placeholder': 'Enter Password'}))  

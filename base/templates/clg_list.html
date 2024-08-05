@@ -32,7 +32,7 @@
                             <div class="events_item">
                                 <div class="thumb">
                                     {%if p.image%}
-                                    <a href="{% url 'sch_list' p.id%}"><img  src="{{p.image.url}}" alt=""></a>
+                                    <a href="{% url 'sch_list' p.id%}"><img style="max-height: 200px; " src="{{p.image.url}}" alt=""></a>
                                     {%endif%}
                                     <span class="category">{{p.name}}</span>
                                   

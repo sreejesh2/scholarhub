@@ -28,21 +28,19 @@
             <div class="sidebar-content">
                 <ul class="nav nav-secondary">
                     <li class="nav-item active">
-                        <a data-bs-toggle="collae" href="{% url 'ad_sc'%}" class="collapsed" aria-expanded="false">
+                        <a data-bs-toggle="collse" href="{% url 'ad_sc'%}" class="collapsed" aria-expanded="false">
                             <i class="fas fa-home"></i>
                             <p>Scholar Ships</p>
 
                         </a>
-                        <a data-bs-toggle="colse" href="{% url 'create_sch'%}" class="collapse" aria-expanded="false">
+                        <a data-bs-toggle="coapse" href="{% url 'create_sch'%}" class="collapsed" aria-expanded="false">
                             <i class="fas fa-home"></i>
                             <p>Create Scholarship</p>
 
                         </a>
-                        {% comment %} <a data-bs-toggle="colaps" href="#dashboard" class="collapsed" aria-expanded="false">
-                            <i class="fas fa-home"></i>
-                            <p>Applications</p>
+                
 
-                        </a> {% endcomment %}
+             
 
                     </li>
 
@@ -82,9 +80,8 @@
             <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
                 <div class="container-fluid">
                     <nav class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex">
-                        <h4>Central Government Panel</h4>
+                        <h4>Central Gov Panel</h4>
                     </nav>
-
                     <div>
                         <a href="{% url 'home'%}" class="fs-5" >Logout</a>
                       </div>
@@ -97,27 +94,28 @@
             <div class="row">
                 <div class="col-12">
 
+
                     <table class="table">
                         <thead>
                             <tr>
                                 <th scope="col">No</th>
                                 <th scope="col">Name</th>
-                                <th scope="col">Amount</th>
-                                <th scope="col">Start Date</th>
-                                <th scope="col">End Date </th>
+                                <th scope="col">Central Level Application Status</th>
+                                <th scope="col">Submission Date</th>
+                                
                                
                                 <th scope="col">Actions </th>
 
                             </tr>
                         </thead>
                         <tbody>
-                            {% for r in scholarships %}
+                            {% for r in applications %}
                             <tr>
                                 <th scope="row">{{ forloop.counter }}</th>
-                                <td>{{ r.title }}</td>
-                                <td>{{ r.amount }}</td>
-                                <td>{{ r.start_date }}</td>
-                                <td>{{ r.end_date }}</td>
+                                <td>{{ r.student.full_name }}</td>
+                                <td>{{ r.get_application_status_display }}</td>
+                                <td>{{ r.submission_date }}</td>
+                              
                              
                                 <td class="d-flex">
                                     <!-- Button trigger modal -->
@@ -134,16 +132,44 @@
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <p><strong>Name:</strong> {{ r.title }}</p>
-                                                    <p><strong>Description:</strong> {{ r.description }}</p>
-                                                    <p><strong>Amounr: </strong>₹ {{ r.amount }}</p>
-                                                    <p><strong>Start Date:</strong> {{ r.start_date }}</p>
-                                                    <p><strong>End Date:</strong> {{ r.end_date }}</p>
-                                                    <p><strong>Educational Level:</strong> {{ r.get_education_level_display }}</p>
-                                                    <p><strong>Cast:</strong> {{ r.get_cast_display }}</p>
-                                                    <p><strong>Disability:</strong> {{ r.get_disability_display }}</p>
-                                                    <p><strong>Gpa</strong> {{ r.gpa }}</p>
-                                                    <a href="{% url 'c_s_a' r.id %} " class="btn btn-info">State Approved Students</a>
+                                                    <!-- Scholarship Details -->
+                                                    <p><strong>Name:</strong> {{ r.scholarship.title }}</p>
+                                                    <p><strong>Description:</strong> {{ r.scholarship.description }}</p>
+                                                    <p><strong>Amount:</strong> ₹{{ r.scholarship.amount }}</p>
+                                                    <p><strong>Start Date:</strong> {{ r.scholarship.start_date }}</p>
+                                                    <p><strong>End Date:</strong> {{ r.scholarship.end_date }}</p>
+                                                    <p><strong>Educational Level:</strong> {{ r.scholarship.get_education_level_display }}</p>
+                                                    <p><strong>Cast:</strong> {{ r.scholarship.get_cast_display }}</p>
+                                                    <p><strong>Disability:</strong> {{ r.scholarship.get_disability_display }}</p>
+                                                    <p><strong>GPA:</strong> {{ r.scholarship.gpa }}</p>
+                                                    <hr>
+                                                    <!-- Student Details -->
+                                                    <p><strong>Student Name:</strong> {{ r.student.full_name }}</p>
+                                                    <p><strong>Phone:</strong> {{ r.student.phone }}</p>
+                                                    <p><strong>Email:</strong> {{ r.student.email }}</p>
+                                                    <p><strong>Educational Level:</strong> {{ r.student.get_education_level_display }}</p>
+                                                    <p><strong>Cast:</strong> {{ r.student.get_cast_display }}</p>
+                                                    <p><strong>Disability:</strong> {{ r.student.get_disability_display }}</p>
+                                                    <p><strong>GPA:</strong> {{ r.student.gpa }}</p>
+                                                    <hr>
+                                                    <!-- ApplyScholarShip Details -->
+                                                    <p><strong>Current School:</strong> {{ r.current_school }}</p>
+                                                    <p><strong>Current Grade:</strong> {{ r.current_grade }}</p>
+                                                    <p><strong>Major Field of Study:</strong> {{ r.major_field_of_study }}</p>
+                                                    <p><strong>Awards and Honors:</strong> {{ r.awards_honors }}</p>
+                                                    <p><strong>Relevant Courses and Grades:</strong> {{ r.relevant_courses_grades }}</p>
+                                                    <p><strong>Research Projects:</strong> {{ r.research_projects }}</p>
+                                                    <p><strong>Clubs and Organizations:</strong> {{ r.clubs_organizations }}</p>
+                                                    <p><strong>Volunteer Work:</strong> {{ r.volunteer_work }}</p>
+                                                    <p><strong>Leadership Roles:</strong> {{ r.leadership_roles }}</p>
+                                                    <p><strong>Sports Competitions:</strong> {{ r.sports_competitions }}</p>
+                                                    <p><strong>Family Income:</strong> ₹{{ r.family_income }}</p>
+                                                    <p><strong>Number of Dependents:</strong> {{ r.number_of_dependents }}</p>
+                                                    <p><strong>Financial Hardship Description:</strong> {{ r.financial_hardship_description }}</p>
+                                                    <p><strong>Personal Essay:</strong> {{ r.personal_essay }}</p>
+                                                    <p><strong>Specific Questions:</strong> {{ r.specific_questions }}</p>
+                                                    <p><strong>References Contact Info:</strong> {{ r.references_contact_info }}</p>
+                                                    <p><strong>Confirmed:</strong> {{ r.confirmed }}</p>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -152,9 +178,20 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="dropdown mx-2">
+                                        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                          Change Status
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                            <li><a class="dropdown-item"  href="{% url 'change_status_ad' pk=r.id status='approved' %}">Approved</a></li>
+                                      <li><a class="dropdown-item"  href="{% url 'change_status_ad' pk=r.id status='rejected' %}">Rejected</a></li>
+                                    
+                                        </ul>
+                                      </div>
                     
                                   
                                 </td>
+                            
                             </tr>
                             {% endfor %}
 

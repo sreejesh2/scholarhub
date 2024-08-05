@@ -91,7 +91,10 @@
 
         <div class="container">
             <div class="row">
+                {% if is_institution %}
                 <a href="{% url 'create_exam' s_id=scholarship.id %}" class="btn btn-info my-4" style="width: 300px ;"> Create Exam for this Scholarship</a>
+
+                {% endif%}
                 <table class="table">
                     <thead>
                         <tr>
@@ -100,7 +103,7 @@
                             <th scope="col">application_status</th>
                             <th scope="col">Submission Date</th>
                             
-                           
+                           <th scope="col">Payment Status</th>
                             <th scope="col">Actions </th>
 
                         </tr>
@@ -112,6 +115,7 @@
                             <td>{{ r.student.full_name }}</td>
                             <td>{{ r.get_application_status_display }}</td>
                             <td>{{ r.submission_date }}</td>
+                            <td>{{r.payment_status }}</td>
                           
                          
                             <td class="d-flex">
@@ -187,7 +191,11 @@
                                   </div>
 
                                   <div>
+                                    {% if not r.payment_status == 'paid'%}
+                                    {%if r.application_status == 'approved'%}
                                     <a href="{% url 'process_payment' r.id%}" class="btn btn-success"> Pay</a>
+                                    {%endif%}
+                                    {%endif%}
                                   </div>
                 
                               
