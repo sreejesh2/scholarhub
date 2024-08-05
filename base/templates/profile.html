@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block home %}
+
+   <div class="container" style="margin-top: 150px;min-height:50vh;">
+    <div class="row">
+      <div class="col-3"></div>
+      <div class="col-6" >
+        <div class="contact-us-content">
+            {% for msg in messages %}
+            {% if msg.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>{{msg}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% else %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>{{msg}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+            {% endfor %}
+            <h1>Profile</h1>
+        
+            <h1>User Profile</h1>
+    
+            <p><strong>Full Name:</strong> {{ profile.full_name }}</p>
+            <p><strong>Email:</strong> {{ profile.email }}</p>
+            <p><strong>Phone:</strong> {{ profile.phone }}</p>
+        
+            {% if detailed %}
+                <p><strong>Date of Birth:</strong> {{ profile.dob }}</p>
+                <p><strong>Gender:</strong> {{ profile.gender }}</p>
+                <p><strong>Address:</strong> {{ profile.address }}</p>
+                <p><strong>Education Level:</strong> {{ profile.education_level }}</p>
+                <p><strong>Cast:</strong> {{ profile.cast }}</p>
+                <p><strong>Disability:</strong> {{ profile.disability }}</p>
+                <p><strong>GPA:</strong> {{ profile.gpa }}</p>
+            {% endif %}
+        </div>
+    </div>
+      <div class="col-3"></div>
+    </div>
+   </div>
+
+   <script>
+    $(document).ready(function(){
+        $('#id_dob').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true
+        });
+    });
+</script>
+{% endblock home %}

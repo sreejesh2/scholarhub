@@ -1,9 +1,10 @@
 from django.shortcuts import render,redirect
-from .form import UserForm,LoginForm,ScholarShipProviderForm,ProviderLoginForm,ApplyScholarShipForm,StudentIDForm
+from .form import UserForm,LoginForm,ScholarShipProviderForm,ProviderLoginForm,ApplyScholarShipForm,StudentIDForm,ScholarShipForm,StudentsForm,StudentRegisterForm
 from rest_framework.response import Response
 from .serializers import UserSerializer,ScholarShipProviderSerializer,ScholarShipSerializer,ApplyScholarShipSerializer,SApplyScholarShipSerializer,ApplyScholarShipStatusSerializer
 from rest_framework.decorators import api_view, permission_classes
 from .models import User,ScholarShipProvider,ScholarShip,ApplyScholarShip,CentralGoverment,StateGoverment,Log,Student
+from django.db.models import Q
 import random
 from django.core.mail import send_mail
 from rest_framework.views import APIView
@@ -92,11 +93,11 @@ class SendOTPView(View):
     template_name = 'register.html'
 
     def get(self, request, *args, **kwargs):
-        form = UserForm()
+        form = StudentRegisterForm()
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        form = UserForm(request.POST)
+        form = StudentRegisterForm(request.POST)
         if form.is_valid():
             phone_number = form.cleaned_data['phone']
             country_code = form.cleaned_data.get('country_code', None)
@@ -106,6 +107,10 @@ class SendOTPView(View):
             gender = form.cleaned_data.get('gender', None)
             email = form.cleaned_data.get('email', None)
             address = form.cleaned_data.get('address', None)
+            education_level = form.cleaned_data.get('education_level', None)
+            cast = form.cleaned_data.get('cast', None)
+            disability = form.cleaned_data.get('disability', None)
+            gpa = form.cleaned_data.get('gpa', None)
 
             try:
                 user = User.objects.get(phone=phone_number, is_deleted=False)
@@ -128,7 +133,12 @@ class SendOTPView(View):
                     gender=gender,
                     email=email,
                     address=address,
-                    is_student = True
+                    is_student = True,
+                    education_level = education_level,
+                    cast =cast,
+                    disability=disability,
+                    gpa=gpa
+
                 )
 
                 if email:
@@ -347,11 +357,9 @@ def org_list(request):
     
     return render(request, 'org_list.html', {'providers': state_scholarships})
 
-
 def collage_list(request):
     scholarships = ScholarShipProvider.objects.filter(provider_type='institution')
     return render(request, 'clg_list.html', {'providers': scholarships})
-
 
 class ProviderLoginView(View):
     template_name = 'pro_login.html'
@@ -368,27 +376,33 @@ class ProviderLoginView(View):
 
             try:
                 sc = ScholarShipProvider.objects.get(provider_id=provider_id, password=pwd)
+                request.session['provider_id'] = sc.provider_id  # Storing the provider's ID in the session
                 if sc.provider_type == 'organization':
-                    return render(request, 'org_panel.html')
+                    
+                    return redirect('ad_sc')
                 elif sc.provider_type == 'institution':
-                    return render(request, 'ins_panel.html')
+                    
+                    return redirect('ad_sc')
                 else:
                     messages.error(request, "Invalid provider type.")
             except ScholarShipProvider.DoesNotExist:
                 try:
-                    cl = CentralGoverment.objects.get(lid=provider_id, password=pwd)
-                    return render(request, 'cl_panel.html')
+                    cl = CentralGoverment.objects.get(provider_id=provider_id, password=pwd)
+                    request.session['provider_id'] = cl.provider_id
+                    
+                    return redirect('ad_sc')
                 except CentralGoverment.DoesNotExist:
                     try:
-                        sl = StateGoverment.objects.get(lid=provider_id, password=pwd)
-                        return render(request, 'sl_panel.html')
+                        sl = StateGoverment.objects.get(provider_id=provider_id, password=pwd)
+                        request.session['provider_id'] = sl.provider_id  # Storing the state government's ID in the session
+                        
+                        return redirect('ad_sc')
                     except StateGoverment.DoesNotExist:
                         messages.error(request, "Invalid provider ID or password.")
         else:
             messages.error(request, "Please correct the errors below.")
 
         return render(request, self.template_name, {"form": form})
-
 
 def list_scholarship(request, pk):
     pvdr = get_object_or_404(ScholarShipProvider, id=pk)
@@ -401,28 +415,41 @@ def list_scholarship(request, pk):
 class ApplyScholarShipView(View):
     def get(self, request, sclr_id):
         sclr_obj = get_object_or_404(ScholarShip, id=sclr_id)
+        provider_is_institution = sclr_obj.provider and sclr_obj.provider.provider_type == 'institution'
+        central_is_institution = sclr_obj.central 
+        state_is_institution = sclr_obj.state 
         
-        if sclr_obj.provider.provider_type == 'institution':
+        if provider_is_institution or central_is_institution or state_is_institution:
             return render(request, 'student_check.html', {'form': StudentIDForm(), 'scholarship': sclr_obj})
-
+        
         form = ApplyScholarShipForm()
-        return render(request, 'apply_scholarship.html', {'form': form, 'scholarship': sclr_obj})
+        return render(request, 'apply_scholarship.html', {'form': form, 'scholarship': sclr_obj})  
 
     def post(self, request, sclr_id):
         sclr_obj = get_object_or_404(ScholarShip, id=sclr_id)
-        
-        if sclr_obj.provider.provider_type == 'institution':
+        provider_is_institution = sclr_obj.provider and sclr_obj.provider.provider_type == 'institution'
+        central_is_institution = sclr_obj.central 
+        state_is_institution = sclr_obj.state 
+
+        valid_provider = None  # Initialize the variable
+
+        if central_is_institution or state_is_institution or provider_is_institution:
             form = StudentIDForm(request.POST)
             if form.is_valid():
                 student_id = form.cleaned_data['student_id']
-                
-                if self.is_valid_student(student_id, sclr_obj.provider):
-                    return render(request, 'apply_scholarship.html', {'form': ApplyScholarShipForm(), 'scholarship': sclr_obj})
+                valid_provider = self.get_valid_provider(student_id)
+
+                if valid_provider:
+                   
+                   
+                    application_form = ApplyScholarShipForm(initial={'valid_provider': valid_provider.id})
+                    return render(request, 'apply_scholarship.html', {'form': application_form, 'scholarship': sclr_obj, 'valid_provider': valid_provider})
                 else:
                     messages.error(request, 'Invalid student ID for this institution.')
                     return render(request, 'student_check.html', {'form': form, 'scholarship': sclr_obj})
 
         form = ApplyScholarShipForm(request.POST, request.FILES)
+       
         if form.is_valid():
             if sclr_obj.end_date and now().date() > sclr_obj.end_date:
                 messages.error(request, 'The application period for this scholarship has ended.')
@@ -431,10 +458,15 @@ class ApplyScholarShipView(View):
             if ApplyScholarShip.objects.filter(scholarship=sclr_obj, student=request.user).exists():
                 messages.error(request, 'You have already applied for this scholarship.')
                 return render(request, 'apply_scholarship.html', {'form': form, 'scholarship': sclr_obj})
-
+            valid_provider_id = form.cleaned_data.get('valid_provider')
+            valid_provider_instance = ScholarShipProvider.objects.get(id=valid_provider_id) if valid_provider_id else None
+            
             application = form.save(commit=False)
             application.scholarship = sclr_obj
             application.student = request.user
+            if central_is_institution or state_is_institution:
+                application.valid_provider_obj = valid_provider_instance
+
             application.save()
 
             if sclr_obj.start_date and sclr_obj.end_date:
@@ -457,9 +489,13 @@ class ApplyScholarShipView(View):
         messages.error(request, 'Failed to submit scholarship application. Please correct the errors below.')
         return render(request, 'apply_scholarship.html', {'form': form, 'scholarship': sclr_obj})
 
-    def is_valid_student(self, student_id, provider):
-        # Check if there is a student with the given ID and the specified provider
-        return Student.objects.filter(student_id=student_id, provider=provider).exists()
+    def get_valid_provider(self, student_id):
+        # Check if there is a student with the given ID and return the provider if valid
+        student = Student.objects.filter(student_id=student_id).first()
+        if student:
+            return student.provider
+        return None
+
 
 def notify(request):
     # Get the logs for the current user and mark them as viewed
@@ -471,7 +507,294 @@ def notify(request):
     return render(request, 'notify.html', {'logs': logs})
 
 
+def recommendation(request):
+    if request.user.is_authenticated:
+        scholarships = ScholarShip.objects.all()
 
+        if request.user.is_student:
+            # Create a list of Q objects for filtering
+            filters = Q()
+            if request.user.education_level:
+                filters |= Q(education_level__gte=request.user.education_level)
+            if request.user.cast:
+                filters |= Q(cast=request.user.cast)  
+            if request.user.disability:
+                filters |= Q(disability=request.user.disability)  
+            if request.user.gpa:
+                filters |= Q(gpa__gte=request.user.gpa)
+
+            # Exclude institution-based scholarships and apply filters
+            scholarships = scholarships.exclude(provider__provider_type='institution').filter(filters)
+            current_date = timezone.now().date()
+
+        return render(request, 'recommendations.html', {'scholarships': scholarships,'current_date':current_date})
+    else:
+        return render(request, 'login.html')
+
+@login_required(login_url='login')
+def profile(request):
+    user_obj = User.objects.get(id=request.user.id)
+    
+    # Check if the user is a student
+    if user_obj.is_student:
+        # Render the template with all details if the user is a student
+        return render(request, 'profile.html', {'profile': user_obj, 'detailed': True})
+    else:
+        # Render the template with basic details if the user is not a student
+        return render(request, 'profile.html', {'profile': user_obj, 'detailed': False})
+
+def admin_scholarship(request):
+    provider_id = request.session.get('provider_id')  # Get provider ID from session
+
+    if not provider_id:
+        messages.error(request, "Session expired. Please log in again.")
+        return redirect('login')  # Redirect to login page or show an error message
+
+    try:
+        provider = ScholarShipProvider.objects.get(provider_id=provider_id)
+        scholarships = ScholarShip.objects.filter(provider=provider)
+        if provider.provider_type == 'organization':
+            return render(request, 'org_panel.html', {'scholarships': scholarships, 'provider': provider})
+        elif provider.provider_type == 'institution':
+            return render(request, 'ins_panel.html', {'scholarships': scholarships, 'provider': provider})
+    except ScholarShipProvider.DoesNotExist:
+        try:
+            provider = CentralGoverment.objects.get(provider_id=provider_id)
+            scholarships = ScholarShip.objects.filter(central=provider)
+            return render(request, 'cl_panel.html', {'scholarships': scholarships, 'provider': provider})
+        except CentralGoverment.DoesNotExist:
+            try:
+                provider = StateGoverment.objects.get(provider_id=provider_id)
+                scholarships = ScholarShip.objects.filter(state=provider)
+                return render(request, 'sl_panel.html', {'scholarships': scholarships, 'provider': provider})
+            except StateGoverment.DoesNotExist:
+                messages.error(request, "Invalid provider ID.")
+                return redirect('login')
+
+    messages.error(request, "Invalid provider ID.")
+    return redirect('login')
+
+
+class ScholarShipCreateView(View):
+    template_name = 'scholarship_c.html'
+    
+    def get(self, request, *args, **kwargs):
+        form = ScholarShipForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = ScholarShipForm(request.POST, request.FILES)
+        if form.is_valid():
+            scholarship = form.save(commit=False)
+            
+            # Retrieve provider_id from session
+            provider_id = request.session.get('provider_id')
+
+            if provider_id:
+                # Check if provider_id matches a provider, central, or state
+                try:
+                    provider = ScholarShipProvider.objects.get(provider_id=provider_id)
+                    scholarship.provider = provider
+                except ScholarShipProvider.DoesNotExist:
+                    try:
+                        central = CentralGoverment.objects.get(provider_id=provider_id)
+                        scholarship.central = central
+                    except CentralGoverment.DoesNotExist:
+                        try:
+                            state = StateGoverment.objects.get(provider_id=provider_id)
+                            scholarship.state = state
+                        except StateGoverment.DoesNotExist:
+                            messages.error(request, 'Invalid provider ID')
+                            return render(request, self.template_name, {'form': form})
+
+            scholarship.save()
+            messages.success(request, 'Scholarship provider created successfully!')
+            return redirect('ad_sc')  # Replace 'home' with your success page URL name
+        else:
+            messages.error(request, form.errors)
+        
+        return render(request, self.template_name, {'form': form})
+
+
+class AppliedScholarships(View):
+    template_name = 'apply_sch.html'
+    
+    def get(self, request, sch_id, *args, **kwargs):
+        sch_obj = get_object_or_404(ScholarShip, id=sch_id)
+        applied_scholarships = ApplyScholarShip.objects.filter(scholarship=sch_obj)
+        return render(request, self.template_name, {
+            "apply_sch": applied_scholarships,
+            "scholarship": sch_obj,
+        })
+
+
+def admin_change_status(request, pk, status):
+    # Retrieve the ApplyScholarShip object
+    aled_sh = get_object_or_404(ApplyScholarShip, id=pk)
+
+    # Update the application status
+    aled_sh.application_status = status
+    aled_sh.save()
+
+
+    # Log the status change
+    Log.objects.create(user=aled_sh.student, body=f"Your {aled_sh.scholarship.title} scholarship application is now {status}")
+
+    # Send an email notification
+    send_mail(
+        'Scholar Hub',
+        f'Your {aled_sh.scholarship.title} scholarship application is now {status}',
+        sender_email,  # Use the sender email configured in settings
+        [aled_sh.student.email],  # Send to the email of the student who applied
+        fail_silently=False,
+    )
+
+    # Notify the user of the status change and redirect
+    messages.success(request, f"The scholarship application status has been updated to {status}.")
+    return redirect('applied_sdnts', sch_id = aled_sh.scholarship.id ) 
+
+class ApprovedScholarships(View):
+    template_name = 'approved_sch.html'
+    
+    def get(self, request, sch_id, *args, **kwargs):
+        sch_obj = get_object_or_404(ScholarShip, id=sch_id)
+        applied_scholarships = ApplyScholarShip.objects.filter(scholarship=sch_obj,status='approved')
+        return render(request, self.template_name, {
+            "approved_sch": applied_scholarships,
+            "scholarship": sch_obj,
+        })
+
+class Students(View):
+    template_name = 'students.html'
+    
+    def get(self, request, *args, **kwargs):
+        form = StudentsForm()
+        provider_id = request.session.get('provider_id')
+        if provider_id is None:
+        # Handle the case where the provider_id is not in the session
+        # For example, you might redirect to a login page or show an error message
+          return redirect('login')  # Adjust this to your login URL or error handling
+
+        # Fetch the students associated with this provider
+        students_list = Student.objects.filter(provider__provider_id=provider_id)
+        return render(request, 'students.html', {'students': students_list,"form":form})
+    def post(self, request, *args, **kwargs):
+        form = StudentsForm(request.POST)
+        provider_id = request.session.get('provider_id')
+        
+        if form.is_valid() and provider_id:
+            student = form.save(commit=False)
+            provider = ScholarShipProvider.objects.get(provider_id=provider_id)
+            student.provider = provider
+            student.save()
+            return redirect('students_list')  # Adjust this to the appropriate URL name
+
+        # If the form is not valid, re-render the page with the form and errors
+        students_list = Student.objects.filter(provider__provider_id=provider_id)
+        return render(request, self.template_name, {'students': students_list, 'form': form})
+       
+# def central_gov_applied(request):
+#     provider_id = request.session.get('provider_id')  # Get provider ID from session
+
+#     if not provider_id:
+#         messages.error(request, "Session expired. Please log in again.")
+#         return redirect('login')  # Redirect to login page or show an error message
+
+
+
+def central_applied_students_view(request):
+    provider_id = request.session.get('provider_id') 
+    if not provider_id:
+        messages.error(request, "Session expired. Please log in again.")
+        return redirect('login') 
+    provider = get_object_or_404(ScholarShipProvider, provider_id=provider_id)
+    central_applications = provider.get_central_applied_students()
+    return render(request, 'central_gov_applied.html', {'applications': central_applications})
+
+
+
+def state_applied_students_view(request):
+    provider_id = request.session.get('provider_id') 
+    if not provider_id:
+        messages.error(request, "Session expired. Please log in again.")
+        return redirect('login') 
+    provider = get_object_or_404(ScholarShipProvider, provider_id=provider_id)
+    central_applications = provider.get_state_applied_students()
+    return render(request, 'state_gov_applied.html', {'applications': central_applications})
+
+
+class ApprovedCollegeLevel(View):
+    template_name = 'central_gov_applied.html'
+    
+    def get(self, request, a_id, status, *args, **kwargs):
+        # Retrieve the ApplyScholarShip object or return a 404 if not found
+        a_obj = get_object_or_404(ApplyScholarShip, id=a_id)
+        
+        # Update the college_level field
+        a_obj.college_level = status
+        a_obj.save()
+
+        # Send email notification
+        send_mail(
+            'Scholar Hub - Status Update',
+            f'Your scholarship application with ID {a_obj} has been updated to {status}.',
+            sender_email,  # Replace with your actual sender email
+            [a_obj.student.email],
+            fail_silently=False,
+        )
+        Log.objects.create(user=a_obj.student,body= f'Your scholarship application with ID {a_obj} has been updated to {status}.',)
+        
+        # Redirect to the specified URL
+        return redirect('cas')  
+
+
+class ApprovedStateCollegeLevel(View):
+    template_name = 'state_gov_applied.html'
+    
+    def get(self, request, a_id,status, *args, **kwargs):
+        a_obj = get_object_or_404(ApplyScholarShip, id=a_id)
+        a_obj.college_level = status
+        a_obj.save()
+        send_mail(
+            'Scholar Hub - Status Update',
+            f'Your scholarship application with ID {a_obj} has been updated to {status}.',
+            sender_email,  # Replace with your actual sender email
+            [a_obj.student.email],
+            fail_silently=False,
+        )
+        Log.objects.create(user=a_obj.student,body= f'Your scholarship application with ID {a_obj} has been updated to {status}.',)
+        
+        return redirect('sas')    
+
+
+
+def collage_approved_students_central(request):
+    provider_id = request.session.get('provider_id') 
+    if not provider_id:
+        messages.error(request, "Session expired. Please log in again.")
+        return redirect('login') 
+
+    applied_students= ApplyScholarShip.objects.filter(college_level='approved',scholarship__central__isnull=False,state_level= 'pending')
+    return render(request, 'collage_approved_students.html', {'applications': applied_students})
+
+
+
+class ApprovedStateLevel(View):
+    template_name = 'collage_approved_students.html'
+    
+    def get(self, request, a_id,status, *args, **kwargs):
+        a_obj = get_object_or_404(ApplyScholarShip, id=a_id)
+        a_obj.state_level = status
+        a_obj.save()
+        send_mail(
+            'Scholar Hub - Status Update',
+            f'Your scholarship application with ID {a_obj} has been updated by State Gov to {status}.',
+            sender_email,  # Replace with your actual sender email
+            [a_obj.student.email],
+            fail_silently=False,
+        )
+        Log.objects.create(user=a_obj.student,body= f'Your scholarship application with ID {a_obj} has been updated by State Gov to {status}.',)
+        return redirect('central_coll_ap') 
 
 
 
@@ -574,37 +897,37 @@ class UserScholarShipProviderDetailView(generics.RetrieveAPIView):
             'data': serializer.data
         }, status=status.HTTP_200_OK)    
     
-class ScholarShipCreateView(APIView):
-    permission_classes = [IsAuthenticated]
+# class ScholarShipCreateView(APIView):
+#     permission_classes = [IsAuthenticated]
 
-    def post(self, request, provider_id):
-        data = request.data.copy()
+#     def post(self, request, provider_id):
+#         data = request.data.copy()
 
-        # Check if the provider exists
-        try:
-            provider = ScholarShipProvider.objects.get(id=provider_id)
-        except ScholarShipProvider.DoesNotExist:
-            return Response({
-                'status': 0,
-                'message': 'Scholarship provider not found'
-            }, status=status.HTTP_404_NOT_FOUND)
+#         # Check if the provider exists
+#         try:
+#             provider = ScholarShipProvider.objects.get(id=provider_id)
+#         except ScholarShipProvider.DoesNotExist:
+#             return Response({
+#                 'status': 0,
+#                 'message': 'Scholarship provider not found'
+#             }, status=status.HTTP_404_NOT_FOUND)
         
-        # Add provider to the data
-        data['provider'] = provider.id
+#         # Add provider to the data
+#         data['provider'] = provider.id
 
-        serializer = ScholarShipSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save(provider=provider)
-            return Response({
-                'status': 1,
-                'message': 'Scholarship created successfully',
-                'data': serializer.data
-            }, status=status.HTTP_201_CREATED)
-        return Response({
-            'status': 0,
-            'message': 'Failed to create scholarship',
-            'errors': serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)    
+#         serializer = ScholarShipSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save(provider=provider)
+#             return Response({
+#                 'status': 1,
+#                 'message': 'Scholarship created successfully',
+#                 'data': serializer.data
+#             }, status=status.HTTP_201_CREATED)
+#         return Response({
+#             'status': 0,
+#             'message': 'Failed to create scholarship',
+#             'errors': serializer.errors
+#         }, status=status.HTTP_400_BAD_REQUEST)    
     
 class UserProvidedScholarShipListView(APIView):
     permission_classes = [IsAuthenticated]
@@ -831,4 +1154,6 @@ class ConfirmedScholarShip(APIView):
             'status': 0,
             'message': 'No approved application found to confirm.',
         }, status=status.HTTP_400_BAD_REQUEST)
+
+
 

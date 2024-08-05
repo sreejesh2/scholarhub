@@ -1,0 +1,235 @@
+{% extends "admin_base.html" %}
+{% load static %}
+{% block a_content %}
+<div class="wrapper">
+    <!-- Sidebar -->
+    <div class="sidebar" data-background-color="dark">
+        <div class="sidebar-logo">
+            <!-- Logo Header -->
+            <div class="logo-header" data-background-color="dark">
+                <a href="index.html" class="logo">
+                    <h3>SCHOLAR HUB</h3>
+                </a>
+                <div class="nav-toggle">
+                    <button class="btn btn-toggle toggle-sidebar">
+                        <i class="gg-menu-right"></i>
+                    </button>
+                    <button class="btn btn-toggle sidenav-toggler">
+                        <i class="gg-menu-left"></i>
+                    </button>
+                </div>
+                <button class="topbar-toggler more">
+                    <i class="gg-more-vertical-alt"></i>
+                </button>
+            </div>
+            <!-- End Logo Header -->
+        </div>
+        <div class="sidebar-wrapper scrollbar scrollbar-inner">
+            <div class="sidebar-content">
+                <ul class="nav nav-secondary">
+                    <li class="nav-item active">
+                        <a data-bs-toggle="coapse" href="{% url 'ad_sc'%}" class="collapsed" aria-expanded="false">
+                            <i class="fas fa-home"></i>
+                            <p>Scholar Ships</p>
+
+                        </a>
+                        <a data-bs-toggle="clapse" href="{% url 'create_sch'%}" class="collapsed" aria-expanded="false">
+                            <i class="fas fa-home"></i>
+                            <p>Create Scholarship</p>
+
+                        </a>
+                        <a data-bs-toggle="colpse" href="#dashboard" class="collapsed" aria-expanded="false">
+                            <i class="fas fa-home"></i>
+                            <p>Dashboard</p>
+
+                        </a>
+
+                    </li>
+
+
+
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- End Sidebar -->
+
+    <div class="main-panel">
+        <div class="main-header">
+            <div class="main-header-logo">
+                <!-- Logo Header -->
+                <div class="logo-header" data-background-color="dark">
+                    <a href="index.html" class="logo">
+                        <img src="assets/img/kaiadmin/logo_light.svg" alt="navbar brand" class="navbar-brand"
+                            height="20" />
+                    </a>
+                    <div class="nav-toggle">
+                        <button class="btn btn-toggle toggle-sidebar">
+                            <i class="gg-menu-right"></i>
+                        </button>
+                        <button class="btn btn-toggle sidenav-toggler">
+                            <i class="gg-menu-left"></i>
+                        </button>
+                    </div>
+                    <button class="topbar-toggler more">
+                        <i class="gg-more-vertical-alt"></i>
+                    </button>
+                </div>
+                <!-- End Logo Header -->
+            </div>
+            <!-- Navbar Header -->
+            <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
+                <div class="container-fluid">
+                    <nav class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex">
+                        <h4>Organization (club) Panel</h4>
+                    </nav>
+
+                    <div>
+                        <a href="{% url 'home'%}" class="fs-5" >Logout</a>
+                      </div>
+                </div>
+            </nav>
+            <!-- End Navbar -->
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">No</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Start Date</th>
+                                <th scope="col">End Date </th>
+                               
+                                <th scope="col">Actions </th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in scholarships %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ r.title }}</td>
+                                <td>{{ r.amount }}</td>
+                                <td>{{ r.start_date }}</td>
+                                <td>{{ r.end_date }}</td>
+                             
+                                <td class="d-flex">
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#modal{{ forloop.counter }}">
+                                        View
+                                    </button>
+                    
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="modal{{ forloop.counter }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalLabel{{ forloop.counter }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="modalLabel{{ forloop.counter }}">Scholarship Provider Request Details</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Name:</strong> {{ r.title }}</p>
+                                                    <p><strong>Description:</strong> {{ r.description }}</p>
+                                                    <p><strong>Amounr: </strong>₹ {{ r.amount }}</p>
+                                                    <p><strong>Start Date:</strong> {{ r.start_date }}</p>
+                                                    <p><strong>End Date:</strong> {{ r.end_date }}</p>
+                                                    <p><strong>Educational Level:</strong> {{ r.get_education_level_display }}</p>
+                                                    <p><strong>Cast:</strong> {{ r.get_cast_display }}</p>
+                                                    <p><strong>Disability:</strong> {{ r.get_disability_display }}</p>
+                                                    <p><strong>Gpa</strong> {{ r.gpa }}</p>
+                                                    <a href="{% url 'applied_sdnts' r.id%} " class="btn btn-info">Applied Students</a>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                    
+                                  
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Custom template | don't include it in your project! -->
+    <div class="custom-template">
+        <div class="title">Settings</div>
+        <div class="custom-content">
+            <div class="switcher">
+                <div class="switch-block">
+                    <h4>Logo Header</h4>
+                    <div class="btnSwitch">
+                        <button type="button" class="selected changeLogoHeaderColor" data-color="dark"></button>
+                        <button type="button" class="changeLogoHeaderColor" data-color="blue"></button>
+                        <button type="button" class="changeLogoHeaderColor" data-color="purple"></button>
+                        <button type="button" class="changeLogoHeaderColor" data-color="light-blue"></button>
+                        <button type="button" class="changeLogoHeaderColor" data-color="green"></button>
+                        <button type="button" class="changeLogoHeaderColor" data-color="orange"></button>
+                        <button type="button" class="changeLogoHeaderColor" data-color="red"></button>
+                        <button type="button" class="changeLogoHeaderColor" data-color="white"></button>
+                        <br />
+                        <button type="button" class="changeLogoHeaderColor" data-color="dark2"></button>
+                        <button type="button" class="changeLogoHeaderColor" data-color="blue2"></button>
+                        <button type="button" class="changeLogoHeaderColor" data-color="purple2"></button>
+                        <button type="button" class="changeLogoHeaderColor" data-color="light-blue2"></button>
+                        <button type="button" class="changeLogoHeaderColor" data-color="green2"></button>
+                        <button type="button" class="changeLogoHeaderColor" data-color="orange2"></button>
+                        <button type="button" class="changeLogoHeaderColor" data-color="red2"></button>
+                    </div>
+                </div>
+                <div class="switch-block">
+                    <h4>Navbar Header</h4>
+                    <div class="btnSwitch">
+                        <button type="button" class="changeTopBarColor" data-color="dark"></button>
+                        <button type="button" class="changeTopBarColor" data-color="blue"></button>
+                        <button type="button" class="changeTopBarColor" data-color="purple"></button>
+                        <button type="button" class="changeTopBarColor" data-color="light-blue"></button>
+                        <button type="button" class="changeTopBarColor" data-color="green"></button>
+                        <button type="button" class="changeTopBarColor" data-color="orange"></button>
+                        <button type="button" class="changeTopBarColor" data-color="red"></button>
+                        <button type="button" class="selected changeTopBarColor" data-color="white"></button>
+                        <br />
+                        <button type="button" class="changeTopBarColor" data-color="dark2"></button>
+                        <button type="button" class="changeTopBarColor" data-color="blue2"></button>
+                        <button type="button" class="changeTopBarColor" data-color="purple2"></button>
+                        <button type="button" class="changeTopBarColor" data-color="light-blue2"></button>
+                        <button type="button" class="changeTopBarColor" data-color="green2"></button>
+                        <button type="button" class="changeTopBarColor" data-color="orange2"></button>
+                        <button type="button" class="changeTopBarColor" data-color="red2"></button>
+                    </div>
+                </div>
+                <div class="switch-block">
+                    <h4>Sidebar</h4>
+                    <div class="btnSwitch">
+                        <button type="button" class="changeSideBarColor" data-color="white"></button>
+                        <button type="button" class="selected changeSideBarColor" data-color="dark"></button>
+                        <button type="button" class="changeSideBarColor" data-color="dark2"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="custom-toggle">
+            <i class="icon-settings"></i>
+        </div>
+    </div>
+    <!-- End Custom template -->
+</div>
+{% endblock a_content %}

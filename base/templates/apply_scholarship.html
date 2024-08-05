@@ -24,7 +24,11 @@
         
             <form method="post" enctype="multipart/form-data" class="border border-3 p-4 rounded shadow my-2">
                 {% csrf_token %}
+                {% if valid_provider %}
+                <input name="valid_provider" value="{{valid_provider}}" type="text" disabled>
+                {%endif%}
                 {{ form.as_p }}
+                
                 <button type="submit" class="btn btn-success mt-3">Submit</button>
             </form>
         </div>

@@ -106,66 +106,56 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
-
+                    <!-- Button trigger modal -->
+<div class="d-flex justify-content-end my-3">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Add Student Id
+      </button>
+      
+      <!-- Modal -->
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add Student Id</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" class="border border-3 p-4 rounded shadow my-2">
+            <div class="modal-body">
+              
+                    {% csrf_token %}
+                    {{ form.as_p }}
+       
+               
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-success">Submit</button>
+            </div>
+        </form>
+          </div>
+        </div>
+      </div>
+</div>
 
                     <table class="table">
                         <thead>
                             <tr>
                                 <th scope="col">No</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Amount</th>
-                                <th scope="col">Start Date</th>
-                                <th scope="col">End Date </th>
-                               
+                                <th scope="col">id</th>
+                            
                                 <th scope="col">Actions </th>
 
                             </tr>
                         </thead>
                         <tbody>
-                            {% for r in scholarships %}
+                            {% for r in students %}
                             <tr>
                                 <th scope="row">{{ forloop.counter }}</th>
-                                <td>{{ r.title }}</td>
-                                <td>{{ r.amount }}</td>
-                                <td>{{ r.start_date }}</td>
-                                <td>{{ r.end_date }}</td>
+                                <td>{{ r.student_id }}</td>
+                            
                              
-                                <td class="d-flex">
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#modal{{ forloop.counter }}">
-                                        View
-                                    </button>
-                    
-                                    <!-- Modal -->
-                                    <div class="modal fade" id="modal{{ forloop.counter }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalLabel{{ forloop.counter }}" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="modalLabel{{ forloop.counter }}">Scholarship Provider Request Details</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p><strong>Name:</strong> {{ r.title }}</p>
-                                                    <p><strong>Description:</strong> {{ r.description }}</p>
-                                                    <p><strong>Amounr: </strong>₹ {{ r.amount }}</p>
-                                                    <p><strong>Start Date:</strong> {{ r.start_date }}</p>
-                                                    <p><strong>End Date:</strong> {{ r.end_date }}</p>
-                                                    <p><strong>Educational Level:</strong> {{ r.get_education_level_display }}</p>
-                                                    <p><strong>Cast:</strong> {{ r.get_cast_display }}</p>
-                                                    <p><strong>Disability:</strong> {{ r.get_disability_display }}</p>
-                                                    <p><strong>Gpa</strong> {{ r.gpa }}</p>
-                                                    <a href="{% url 'applied_sdnts' r.id%} " class="btn btn-info">Applied Students</a>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                    
-                                  
-                                </td>
+                               
                             </tr>
                             {% endfor %}
 

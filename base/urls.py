@@ -20,6 +20,19 @@ urlpatterns = [
     path('institutions/', views.collage_list, name='collage_list'),
     path('scholarship/list/<int:pk>/',views.list_scholarship,name='sch_list'),
     path('notify/',views.notify,name='notify'),
+    path('recommentation/',views.recommendation,name='recom'),
+    path('profile/',views.profile,name='profile'),
+    path('ad/scholarships/',views.admin_scholarship,name= 'ad_sc'),
+    path('create/html/scholarship/',views.ScholarShipCreateView.as_view(),name='create_sch'),
+    path('ad/applied/scholarship/<int:sch_id>/',views.AppliedScholarships.as_view(),name='applied_sdnts'),
+    path('change/application_status/<int:pk>/<str:status>/',views.admin_change_status,name='change_status_ad'),
+    path('students/list/',views.Students.as_view(),name='students_list'),
+    path('central/appied/scholarship/',views.central_applied_students_view,name='cas'),
+    path('state/appied/scholarship/',views.state_applied_students_view,name='sas'),
+    path('status/change/college/<int:a_id>/<str:status>/',views.ApprovedCollegeLevel.as_view(),name='st_c'),
+    path('status/change/college/state/<int:a_id>/<str:status>/',views.ApprovedStateCollegeLevel.as_view(),name='st_s'),
+    path('collage/approved/students/state/',views.collage_approved_students_central,name='central_coll_ap'),
+    path('state/approv/<int:a_id>/<str:status>/',views.ApprovedStateLevel.as_view(),name='state_approve'),
 
 
 
@@ -27,7 +40,7 @@ urlpatterns = [
     path('user/profile/', views.user_profile_view, name='user-profile'),
     path('scholarship-provider/create/', views.ScholarShipProviderCreateView.as_view(), name='scholarship-provider-create'),
     path('scholarship-provider/detail/', views.UserScholarShipProviderDetailView.as_view(), name='scholarship-provider-detail'),
-    path('scholarship/create/<int:provider_id>/', views.ScholarShipCreateView.as_view(), name='scholarship-create'),
+    # path('scholarship/create/<int:provider_id>/', views.ScholarShipCreateView.as_view(), name='scholarship-create'),
     path('scholarship/my-provided-scholarships/', views.UserProvidedScholarShipListView.as_view(), name='user-provided-scholarship-list'),
     path('providers/', views.ProviderListView.as_view(), name='provider-list'),
     path('scholarship/list/<int:provider_id>/',views.ScholarShipListView.as_view(),name='list-scholarship'),

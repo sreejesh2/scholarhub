@@ -47,6 +47,20 @@ class User(AbstractBaseUser):
     fcm_token = models.CharField(max_length=1000, blank=True, null=True)
     country_code = models.CharField(max_length=10, default='+91', blank=True, null=True)
     address = models.TextField(max_length=1000)
+    EDU_OP = (('10','10'),
+              ('plus_two','Plus Two'),
+              ('ug','UG'),
+              ('pg','PG'))
+    education_level = models.CharField(max_length=200,choices=EDU_OP,null=True,blank=True)
+    CAST_OP=(('sc_st','SE-ST'),
+              ('obc','OBC'),
+              ('genaral','Genaral')
+            )
+    cast =models.CharField(max_length=200,choices=CAST_OP,null=True,blank=True)
+    DIS_OP=(('1','Yes'),
+            ('0','No'),)
+    disability =models.CharField(max_length=200,choices=DIS_OP,null=True,blank=True)
+    gpa = models.CharField(max_length=255,null=True,blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['full_name', 'phone']
@@ -66,7 +80,7 @@ class CentralGoverment(models.Model):
     image = models.ImageField(upload_to='images',null=True,blank=True)
     name =  models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)
-    lid = models.CharField(max_length=255, unique=True,null=True,blank=True)
+    provider_id = models.CharField(max_length=255, unique=True,null=True,blank=True)
     password = models.CharField(max_length=255, null=True,blank=True)
     def __str__(self) -> str:
         return self.name
@@ -76,7 +90,7 @@ class StateGoverment(models.Model):
     image = models.ImageField(upload_to='images',null=True,blank=True)
     name =  models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)
-    lid = models.CharField(max_length=255, unique=True,null=True,blank=True)
+    provider_id = models.CharField(max_length=255, unique=True,null=True,blank=True)
     password = models.CharField(max_length=255, null=True,blank=True)
 
     def __str__(self) -> str:
@@ -110,10 +124,22 @@ class ScholarShipProvider(models.Model):
     city = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
     remark = models.CharField(max_length=255,null=True,blank=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES,default='pending') 
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES,default='P') 
     image = models.ImageField(upload_to='scolarship_provider',null=True,blank=True)
     provider_id = models.CharField(max_length=200,null=True,blank=True)
     password = models.CharField(max_length=200,null=True,blank=True)
+
+    def get_central_applied_students(self):
+        central_scholarships = ScholarShip.objects.filter(central__isnull=False)
+        central_applications = ApplyScholarShip.objects.filter(scholarship__in=central_scholarships,valid_provider_obj=self,college_level='pending')
+        return central_applications
+    
+    def get_state_applied_students(self):
+        state_scholarships = ScholarShip.objects.filter(state__isnull=False)
+        state_applications = ApplyScholarShip.objects.filter(scholarship__in=state_scholarships,valid_provider_obj=self,college_level='pending')
+        return state_applications
+    
+ 
 
     def __str__(self):
         return self.name 
@@ -148,6 +174,11 @@ class ScholarShip(models.Model):
 
     
 class ApplyScholarShip(models.Model):
+    COM= (
+         ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected')
+    )
     scholarship = models.ForeignKey(ScholarShip, on_delete=models.CASCADE, null=True, blank=True)
     student = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     application_status = models.CharField(max_length=50, choices=[
@@ -195,7 +226,11 @@ class ApplyScholarShip(models.Model):
     proof_of_enrollment = models.FileField(upload_to='proof_of_enrollment', null=True, blank=True)
     passport_photo = models.FileField(upload_to='passport_photos', null=True, blank=True)
     confirmed = models.BooleanField(default=False,null=True,blank=True)
-
+    state_level = models.CharField(max_length=40,choices=COM, default='pending')
+    central_level = models.CharField(max_length=40,choices=COM, default='pending')
+    college_level = models.CharField(max_length=40,choices=COM, default='pending')
+    valid_provider = models.PositiveIntegerField(null=True,blank=True)
+    valid_provider_obj = models.ForeignKey(ScholarShipProvider,on_delete=models.CASCADE,null=True,blank=True)
     def __str__(self):
         return f'{self.student.full_name} - {self.scholarship.title}'
     

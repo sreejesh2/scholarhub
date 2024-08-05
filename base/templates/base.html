@@ -62,11 +62,11 @@ https://templatemo.com/tm-586-scholar
             <!-- ***** Logo End ***** -->
             <!-- ***** Serach Start ***** -->
             <div class="search-input">
-              <form id="search" action="#">
+              <!-- <form id="search" action="#">
                 <input type="text" placeholder="Type Something" id='searchText' name="searchKeyword"
                   onkeypress="handle" />
                 <i class="fa fa-search"></i>
-              </form>
+              </form> -->
             </div>
             <!-- ***** Serach Start ***** -->
             <!-- ***** Menu Start ***** -->
@@ -81,8 +81,8 @@ https://templatemo.com/tm-586-scholar
                   <ul class="dropdown-menu " aria-labelledby="dropdownMenuButton1">
                     <li><a class="dropdown-item text-dark" href="{% url 'provider_c' %}">Request for Service
                         Provider</a></li>
-                    <li><a class="dropdown-item text-dark" href="#">Another action</a></li>
-                    <li><a class="dropdown-item text-dark" href="#">Something else here</a></li>
+                    <!-- <li><a class="dropdown-item text-dark" href="#">Another action</a></li>
+                    <li><a class="dropdown-item text-dark" href="#">Something else here</a></li> -->
                   </ul>
                 </div>
               </li>
@@ -90,15 +90,23 @@ https://templatemo.com/tm-586-scholar
               <!-- <li class="scroll-to-section"><a href="#courses">Courses</a></li> -->
 
               {% if request.user.is_authenticated %}
+             
               <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle text-white" data-bs-toggle="dropdown">
                   {{ request.user.full_name }}
                 </a>
                 <div class="dropdown-menu m-0 rounded-0">
-                  <a href="#" class="dropdown-item">Profile</a>
+                  <a href="{% url 'profile' %}" class="dropdown-item">Profile</a>
                   <a href="{% url 'logout' %}" class="dropdown-item">Logout</a>
                 </div>
               </div>
+                {% if request.user.is_student %}
+                <li class="scroll-to-section">
+                  <a href="{% url 'recom' %}" title="Recommended Scholarships">
+                      <i class="fa-solid fa-star"></i>
+                  </a>
+              </li>
+              {%endif%}
               <li class="scroll-to-section"><a href="{% url 'notify'%}"><i class="fa-solid fa-bell fs-4"></i> </a></li>
               {% if unread_logs_count > 0 %}
               <div class="text-white bg-danger fw-bold p-2  " style="border-radius: 60%; width: 25px; height: 25px; display: flex; justify-content: center; align-items: center ; position: absolute;  top: -10px;">{{unread_logs_count}}</div>

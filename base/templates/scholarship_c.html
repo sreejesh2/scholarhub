@@ -28,33 +28,18 @@
             <div class="sidebar-content">
                 <ul class="nav nav-secondary">
                     <li class="nav-item active">
-                        <a data-bs-toggle="collse" href="{% url 'ad_sc'%}" class="collapsed" aria-expanded="false">
+                        <a data-bs-toggle="collae" href="{% url 'ad_sc'%}" class="collapsed" aria-expanded="false">
                             <i class="fas fa-home"></i>
                             <p>Scholar Ships</p>
 
                         </a>
-                        <a data-bs-toggle="coapse" href="{% url 'create_sch'%}" class="collapsed" aria-expanded="false">
+                        <a data-bs-toggle="colpse" href="{% url 'create_sch'%}" class="collapsed" aria-expanded="false">
                             <i class="fas fa-home"></i>
                             <p>Create Scholarship</p>
 
                         </a>
-                        <a data-bs-toggle="collse" href="{% url 'students_list'%}" class="collapsed" aria-expanded="false">
-                            <i class="fas fa-home"></i>
-                            <p>Students</p>
-
-                        </a>
-
-                        <a data-bs-toggle="collse" href="{% url 'cas'%}" class="collapsed" aria-expanded="false">
-                            <i class="fas fa-home"></i>
-                            <p>Central Gov Applied Students</p>
-
-                        </a>
-                        <a data-bs-toggle="collse" href="#dashboard" class="collapsed" aria-expanded="false">
-                            <i class="fas fa-home"></i>
-                            <p>State Gov Applied Students</p>
-
-                        </a>
-
+                  
+ 
                     </li>
 
 
@@ -93,11 +78,12 @@
             <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
                 <div class="container-fluid">
                     <nav class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex">
-                        <h4>Institution Panel</h4>
+                        <h4></h4>
                     </nav>
                     <div>
                         <a href="{% url 'home'%}" class="fs-5" >Logout</a>
                       </div>
+                    
                 </div>
             </nav>
             <!-- End Navbar -->
@@ -105,75 +91,20 @@
 
         <div class="container">
             <div class="row">
-                <div class="col-12">
+                <h3 class="text-center">Scholarship Create</h3>
+                <div class="col-2"></div>
+                <div class="col-8">
 
-
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">No</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Amount</th>
-                                <th scope="col">Start Date</th>
-                                <th scope="col">End Date </th>
-                               
-                                <th scope="col">Actions </th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for r in scholarships %}
-                            <tr>
-                                <th scope="row">{{ forloop.counter }}</th>
-                                <td>{{ r.title }}</td>
-                                <td>{{ r.amount }}</td>
-                                <td>{{ r.start_date }}</td>
-                                <td>{{ r.end_date }}</td>
-                             
-                                <td class="d-flex">
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#modal{{ forloop.counter }}">
-                                        View
-                                    </button>
-                    
-                                    <!-- Modal -->
-                                    <div class="modal fade" id="modal{{ forloop.counter }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalLabel{{ forloop.counter }}" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="modalLabel{{ forloop.counter }}">Scholarship Provider Request Details</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p><strong>Name:</strong> {{ r.title }}</p>
-                                                    <p><strong>Description:</strong> {{ r.description }}</p>
-                                                    <p><strong>Amounr: </strong>₹ {{ r.amount }}</p>
-                                                    <p><strong>Start Date:</strong> {{ r.start_date }}</p>
-                                                    <p><strong>End Date:</strong> {{ r.end_date }}</p>
-                                                    <p><strong>Educational Level:</strong> {{ r.get_education_level_display }}</p>
-                                                    <p><strong>Cast:</strong> {{ r.get_cast_display }}</p>
-                                                    <p><strong>Disability:</strong> {{ r.get_disability_display }}</p>
-                                                    <p><strong>Gpa</strong> {{ r.gpa }}</p>
-                                                    <a href="{% url 'applied_sdnts' r.id%} " class="btn btn-info">Applied Students</a>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                    
-                                  
-                                </td>
-                            </tr>
-                            {% endfor %}
-
-                        </tbody>
-                    </table>
-
-
-                </div>
+                     
+                    <form method="post" class="border border-3 p-4 rounded shadow my-2">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-success mt-3">Submit</button>
+                    </form>
+                            
+        
+                        </div>
+                <div class="col-2"></div>
             </div>
         </div>
 

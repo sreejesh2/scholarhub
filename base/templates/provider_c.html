@@ -22,7 +22,7 @@
             {% endfor %}
             <h1>Scholar Ship Provider Create Form</h1>
         
-            <form method="post" class="border border-3 p-4 rounded shadow my-2">
+            <form method="post" enctype="multipart/form-data" class="border border-3 p-4 rounded shadow my-2">
                 {% csrf_token %}
                 {{ form.as_ul }}
                 <button type="submit" class="btn btn-success mt-3">Submit</button>
