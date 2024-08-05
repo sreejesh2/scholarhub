@@ -27,9 +27,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
 # Application definition
-
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -146,3 +151,7 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'sukumars0053@gmail.com'
 EMAIL_HOST_PASSWORD = 'wshr okwi dpxi eert'
+
+
+RAZORPAY_KEY_ID = 'rzp_test_91eopcxhCbCO8V'
+RAZORPAY_KEY_SECRET = 'cTyXYxAGkogvHHxThPfKTH0s'

@@ -20,23 +20,26 @@
             </div>
             {% endif %}
             {% endfor %}
-            <h1>Profile</h1>
+            
         
-            <h1>User Profile</h1>
+            <h1 class="text-center">Profile</h1>
     
-            <p><strong>Full Name:</strong> {{ profile.full_name }}</p>
-            <p><strong>Email:</strong> {{ profile.email }}</p>
-            <p><strong>Phone:</strong> {{ profile.phone }}</p>
-        
-            {% if detailed %}
-                <p><strong>Date of Birth:</strong> {{ profile.dob }}</p>
-                <p><strong>Gender:</strong> {{ profile.gender }}</p>
-                <p><strong>Address:</strong> {{ profile.address }}</p>
-                <p><strong>Education Level:</strong> {{ profile.education_level }}</p>
-                <p><strong>Cast:</strong> {{ profile.cast }}</p>
-                <p><strong>Disability:</strong> {{ profile.disability }}</p>
-                <p><strong>GPA:</strong> {{ profile.gpa }}</p>
-            {% endif %}
+            <div class="border border-3 shadow p-4">
+                <h3 class="my-1"><strong>Full Name:</strong> {{ profile.full_name }}</h3>
+                <h4 class="my-1"><strong>Email:</strong> {{ profile.email }}</h4>
+                <h5 class="my-1"><strong>Phone:</strong> {{ profile.phone }}</h5>
+            
+                {% if detailed %}
+                    <p><strong>Date of Birth:</strong> {{ profile.dob }}</p>
+                    <p><strong>Gender:</strong> {{ profile.gender }}</p>
+                    <p><strong>Address:</strong> {{ profile.address }}</p>
+                    <p><strong>Education Level:</strong> {{ profile.education_level }}</p>
+                    <p><strong>Cast:</strong> {{ profile.cast }}</p>
+                    <p><strong>Disability:</strong> {{ profile.disability }}</p>
+                    <p><strong>GPA:</strong> {{ profile.gpa }}</p>
+                {% endif %}
+                <a href="" class="btn btn-warning"> Edit</a>
+            </div>
         </div>
     </div>
       <div class="col-3"></div>

@@ -15,6 +15,7 @@ from django.utils import timezone
 from rest_framework import generics
 from datetime import timedelta
 from rest_framework_simplejwt.tokens import RefreshToken
+import razorpay
 from django.shortcuts import get_object_or_404
 from django.views import View
 from django.utils.timezone import now
@@ -28,8 +29,11 @@ from django.contrib import messages
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.contrib.auth.mixins import LoginRequiredMixin
+from decimal import Decimal
+from scholarhub import settings
 
 
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 # Create your views here.
 
 sender_email = f'Scholar Hub <{settings.EMAIL_HOST_USER}>'
@@ -767,7 +771,6 @@ class ApprovedStateCollegeLevel(View):
         return redirect('sas')    
 
 
-
 def collage_approved_students_central(request):
     provider_id = request.session.get('provider_id') 
     if not provider_id:
@@ -776,7 +779,6 @@ def collage_approved_students_central(request):
 
     applied_students= ApplyScholarShip.objects.filter(college_level='approved',scholarship__central__isnull=False,state_level= 'pending')
     return render(request, 'collage_approved_students.html', {'applications': applied_students})
-
 
 
 class ApprovedStateLevel(View):
@@ -795,6 +797,105 @@ class ApprovedStateLevel(View):
         )
         Log.objects.create(user=a_obj.student,body= f'Your scholarship application with ID {a_obj} has been updated by State Gov to {status}.',)
         return redirect('central_coll_ap') 
+
+
+def create_exam(request, s_id):
+    sch_obj = get_object_or_404(ScholarShip, id=s_id)
+    
+    if request.method == 'POST':
+        # Get exam details from the form
+        exam_date = request.POST['exam_date']
+        exam_time = request.POST['exam_time']
+        exam_venue = request.POST['exam_venue']
+        
+        # Get the approved applications
+        apply_objs = ApplyScholarShip.objects.filter(scholarship=sch_obj, application_status='approved')
+        
+        # Send email to each approved applicant
+        for a in apply_objs:
+            send_mail(
+                'Exam Details',
+                f'Dear {a.student.full_name},\n\n'
+                f'Your exam is scheduled as follows:\n'
+                f'Date: {exam_date}\n'
+                f'Time: {exam_time}\n'
+                f'Venue: {exam_venue}\n\n'
+                f'Good luck!\n'
+                f'Scholar Hub Team',
+                sender_email,  # Replace with your actual sender email
+                [a.student.email],  # Assuming 'applicant_email' is a field in the ApplyScholarShip model
+                fail_silently=False,
+            )
+        
+        # Redirect to a success page or the scholarship details page
+        return redirect('ad_sc')  # Make sure 'scholarship_detail' is a valid URL name
+
+    # If GET request, render the form template
+    return render(request, 'create_exam.html', {'sch_obj': sch_obj})
+
+
+class ProcessPaymentView(View):
+    def get(self, request, a_id, *args, **kwargs):
+        allpy = get_object_or_404(ApplyScholarShip, id=a_id)
+        amount = allpy.scholarship.amount.quantize(Decimal('1.00')) * 100  # Convert to paise and ensure no floating point issues
+
+        # Convert amount to an integer (paise)
+        amount_in_paise = int(amount)
+
+        # Create Razorpay order
+        order = razorpay_client.order.create({
+            'amount': amount_in_paise,
+            'currency': 'INR',
+            'payment_capture': '1'
+        })
+
+        # Save the order ID to the donation object
+        allpy.order_id = order['id']
+        allpy.save()
+
+        return render(request, "payment.html", {
+            'order_id': order['id'],
+            'amount': amount_in_paise,
+            'api_key': 'rzp_test_91eopcxhCbCO8V',
+            "scholarship": allpy
+        })
+
+def payment_success(request):
+    payment_id = request.GET.get('payment_id')
+    order_id = request.GET.get('order_id')
+    signature = request.GET.get('signature')
+    scholarship_id = request.GET.get('scholarship_id')
+    
+    # Retrieve the ApplyScholarShip object and update its status
+    allpy = get_object_or_404(ApplyScholarShip, id = scholarship_id)
+    allpy.is_paid = True
+    allpy.payment_status = 'paid'
+    allpy.save()
+    
+    return render(request, 'payment_success.html', {
+        'payment_id': payment_id,
+        'order_id': order_id,
+        'signature': signature,
+    })
+
+def payment_failure(request):
+    code = request.GET.get('code')
+    description = request.GET.get('description')
+    return render(request, 'payment_failure.html', {'code': code, 'description': description})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

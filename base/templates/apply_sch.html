@@ -38,11 +38,7 @@
                             <p>Create Scholarship</p>
 
                         </a>
-                        <a data-bs-toggle="collae" href="#dashboard" class="collapsed" aria-expanded="false">
-                            <i class="fas fa-home"></i>
-                            <p>Dashboard</p>
-
-                        </a>
+                   
 
                     </li>
 
@@ -95,6 +91,7 @@
 
         <div class="container">
             <div class="row">
+                <a href="{% url 'create_exam' s_id=scholarship.id %}" class="btn btn-info my-4" style="width: 300px ;"> Create Exam for this Scholarship</a>
                 <table class="table">
                     <thead>
                         <tr>
@@ -187,6 +184,10 @@
                                       <li><a class="dropdown-item"  href="{% url 'change_status_ad' pk=r.id status='rejected' %}">Rejected</a></li>
                                     
                                     </ul>
+                                  </div>
+
+                                  <div>
+                                    <a href="{% url 'process_payment' r.id%}" class="btn btn-success"> Pay</a>
                                   </div>
                 
                               

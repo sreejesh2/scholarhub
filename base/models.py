@@ -231,6 +231,10 @@ class ApplyScholarShip(models.Model):
     college_level = models.CharField(max_length=40,choices=COM, default='pending')
     valid_provider = models.PositiveIntegerField(null=True,blank=True)
     valid_provider_obj = models.ForeignKey(ScholarShipProvider,on_delete=models.CASCADE,null=True,blank=True)
+    order_id = models.CharField(max_length=100, blank=True, null=True)  # Razorpay Order ID
+    payment_id = models.CharField(max_length=100, blank=True, null=True)  # Razorpay Payment ID
+    payment_status = models.CharField(max_length=20, default='pending')  # Payment Status
+    is_paid = models.BooleanField(default=False,blank=True,null=True)
     def __str__(self):
         return f'{self.student.full_name} - {self.scholarship.title}'
     

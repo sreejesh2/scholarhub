@@ -33,6 +33,10 @@ urlpatterns = [
     path('status/change/college/state/<int:a_id>/<str:status>/',views.ApprovedStateCollegeLevel.as_view(),name='st_s'),
     path('collage/approved/students/state/',views.collage_approved_students_central,name='central_coll_ap'),
     path('state/approv/<int:a_id>/<str:status>/',views.ApprovedStateLevel.as_view(),name='state_approve'),
+    path('create/exam/<int:s_id>/',views.create_exam,name='create_exam'),
+    path('process_payment/<int:a_id>/', views.ProcessPaymentView.as_view(), name='process_payment'),
+    path('payment_success/', views.payment_success, name='payment_success'),
+    path('payment_failure/', views.payment_failure, name='payment_failure'),
 
 
 
