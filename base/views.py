@@ -114,7 +114,7 @@ class SendOTPView(View):
             education_level = form.cleaned_data.get('education_level', None)
             cast = form.cleaned_data.get('cast', None)
             disability = form.cleaned_data.get('disability', None)
-            gpa = form.cleaned_data.get('gpa', None)
+            cgpa = form.cleaned_data.get('cgpa', None)
 
             try:
                 user = User.objects.get(phone=phone_number, is_deleted=False)
@@ -141,7 +141,7 @@ class SendOTPView(View):
                     education_level = education_level,
                     cast =cast,
                     disability=disability,
-                    gpa=gpa
+                    cgpa=cgpa
 
                 )
 
@@ -299,6 +299,191 @@ class ProviderCreateView(View):
         else:
             messages.error(request, form.errors)
         return render(request, self.template_name, {'form': form})
+
+
+def generate_otp():
+    return random.randint(100000, 999999)
+
+def forgot_password(request):
+    if request.method == "POST":
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            otp = generate_otp()
+            # Store the OTP in the user's profile or a temporary session
+            user.otp = otp
+            user.otp_created_at = timezone.now()
+            user.save()
+
+            # Send OTP via email
+            send_mail(
+                'Your OTP for Password Reset',
+                f'Your OTP is {otp}. Please enter this to reset your password.',
+                sender_email,  # Replace with your email
+                [email],
+                fail_silently=False,
+            )
+            # Redirect to OTP verification page
+           
+            return redirect('verify_otpf' , pk= user.id)
+        except User.DoesNotExist:
+            messages.error(request, 'No user is associated with this email address.')
+            return redirect('login')
+
+    return render(request, 'login.html')
+
+
+def provider_password_reset(request):
+    if request.method == "POST":
+        provider_id = request.POST.get('provider_id')
+        if not provider_id:
+            messages.error(request, "Provider ID is required.")
+            return redirect('provider-login')  # Redirect to the login page if no provider ID is entered
+
+        # Initialize provider as None
+        provider = None
+
+        # Check in ScholarshipProvider first
+        try:
+            provider = ScholarShipProvider.objects.get(provider_id=provider_id)
+        except ScholarShipProvider.DoesNotExist:
+            pass
+
+        # If not found, check in Central Government
+        if not provider:
+            try:
+                provider = CentralGoverment.objects.get(provider_id=provider_id)
+            except CentralGoverment.DoesNotExist:
+                pass
+
+        # If not found, check in State Government
+        if not provider:
+            try:
+                provider = StateGoverment.objects.get(provider_id=provider_id)
+            except StateGoverment.DoesNotExist:
+                provider = None
+
+        if provider:
+            return redirect('reset_pass_pro' ,provider_id=provider_id )  # Redirect to the desired view
+
+        else:
+            messages.error(request, "Invalid provider ID.")
+            return redirect('pro_l')
+
+    return render(request, 'login.html')
+
+
+def provider_reset(request, provider_id):
+    if request.method == "POST":
+        pass1 = request.POST.get('pass1')
+        pass2 = request.POST.get('pass2')
+
+        if pass1 == pass2:
+            # Initialize the provider object
+            provider = None
+
+            # Check in ScholarshipProvider first
+            try:
+                provider = ScholarShipProvider.objects.get(provider_id=provider_id)
+            except ScholarShipProvider.DoesNotExist:
+                pass
+
+            # If not found, check in Central Government
+            if not provider:
+                try:
+                    provider = CentralGoverment.objects.get(provider_id=provider_id)
+                except CentralGoverment.DoesNotExist:
+                    pass
+
+            # If not found, check in State Government
+            if not provider:
+                try:
+                    provider = StateGoverment.objects.get(provider_id=provider_id)
+                except StateGoverment.DoesNotExist:
+                    provider = None
+
+            if provider:
+                # Update the password for the identified provider
+                provider.password = pass1  # Consider hashing the password if it's plain text
+                provider.save()
+
+                messages.success(request, "Password updated successfully.")
+                return redirect('pro_l')
+            else:
+                messages.error(request, "Invalid provider ID.")
+        else:
+            messages.error(request, "Passwords do not match.")
+    
+    return render(request, 'reset_pass.html')
+
+
+class VerifyOTPViewFor(View):
+    template_name = 'otpf.html'
+
+    def get(self, request, pk, *args, **kwargs):
+        # You can add any context data here if needed
+        context = {
+            'pk': pk
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk, *args, **kwargs):
+        # Collect the OTP digits from the POST request
+        num1 = request.POST.get('num1')
+        num2 = request.POST.get('num2')
+        num3 = request.POST.get('num3')
+        num4 = request.POST.get('num4')
+        num5 = request.POST.get('num5')
+        num6 = request.POST.get('num6')
+
+        # Combine them into a single OTP string
+        otp = f"{num1}{num2}{num3}{num4}{num5}{num6}"
+
+        try:
+            user_obj = User.objects.get(id=pk)
+        except User.DoesNotExist:
+            messages.error(request, 'User not found')
+            return redirect('verify-otpf', pk=pk)
+
+        otp_expiry_time = user_obj.otp_created_at + timedelta(minutes=5)
+        if timezone.now() > otp_expiry_time:
+            messages.error(request, 'OTP expired')
+            return redirect('verify-otpf', pk=pk)
+
+        # Verify the OTP
+        if user_obj.otp == otp:
+            user_obj.phone_verified = True
+            user_obj.otp = None  # Clear OTP after successful verification
+            user_obj.otp_created_at = None
+            user_obj.save()
+            
+   
+            messages.success(request, 'otp verified successfully!')
+            return redirect('f-page' ,pk=pk)
+
+        messages.error(request, 'Invalid OTP. Please try again.')
+        return redirect('verify-otpf', pk=pk)
+
+def fpage(request,pk):
+    if request.method == "POST":
+        pass1 = request.POST.get('pass1')
+        pass2 = request.POST.get('pass2')
+        
+        # Example: Check if passwords match
+        if pass1 == pass2:
+            # Handle the logic when passwords match
+            # For example, update the user's password
+            user = User.objects.get(id=pk)
+            user.set_password(pass1)
+            user.save()
+            
+            messages.success(request, "Password updated successfully.")
+            return redirect('login')
+        else:
+            messages.error(request, "Passwords do not match.")
+    
+    return render(request, 'f-page.html')
+
 
 def admin(request):
     if not request.user.is_staff:
@@ -537,7 +722,7 @@ def recommendation(request):
                 exact_match = False
 
             if request.user.gpa:
-                filters &= Q(gpa__lte=request.user.gpa)
+                filters &= Q(cgpa__lte=request.user.cgpa)
             else:
                 exact_match = False
 

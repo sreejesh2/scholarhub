@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-
+{% load static%}
 {% block home %}
 
    <div class="container" style="margin-top: 150px;min-height:50vh;">
     <div class="row">
-      <div class="col-3"></div>
-      <div class="col-6" >
+      <div class="col-2"></div>
+      <div class="col-8" >
         <div class="contact-us-content">
             {% for msg in messages %}
             {% if msg.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
@@ -25,26 +25,57 @@
             <h1 class="text-center">Profile</h1>
     
             <div class="border border-3 shadow p-4">
-                <h3 class="my-1"><strong>Full Name:</strong> {{ profile.full_name }}</h3>
-                <h4 class="my-1"><strong>Email:</strong> {{ profile.email }}</h4>
-                <h5 class="my-1"><strong>Phone:</strong> {{ profile.phone }}</h5>
+                <div class="d-flex justify-content-center">
+                    <img src="{% static 'images/pro.png' %}" alt="" style="width: 150px; border-radius: 50px; " >
+                </div>
+                <h3 class="my-1 text-center"> {{ profile.full_name }}</h3>
+                <h4 class="my-1 text-center">{{ profile.email }}</h4>
+                <h5 class="my-1 text-center"> {{ profile.phone }}</h5>
             
                 {% if detailed %}
-                    <p><strong>Date of Birth:</strong> {{ profile.dob }}</p>
-                    <p><strong>Gender:</strong> {{ profile.gender }}</p>
-                    <p><strong>Address:</strong> {{ profile.address }}</p>
-                    <p><strong>Education Level:</strong> {{ profile.education_level }}</p>
-                    <p><strong>Cast:</strong> {{ profile.cast }}</p>
-                    <p><strong>Disability:</strong> {{ profile.disability }}</p>
-                    <p><strong>GPA:</strong> {{ profile.gpa }}</p>
-                {% endif %}
-                {% request.user.is_student %}
+                <div class="mb-3">
+                    <label for="dob" class="form-label"><strong>Date of Birth:</strong></label>
+                    <input type="text" class="form-control" id="dob" value="{{ profile.dob }}" disabled>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="gender" class="form-label"><strong>Gender:</strong></label>
+                    <input type="text" class="form-control" id="gender" value="{{ profile.gender }}" disabled>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="address" class="form-label"><strong>Address:</strong></label>
+                    <input type="text" class="form-control" id="address" value="{{ profile.address }}" disabled>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="education_level" class="form-label"><strong>Education Level:</strong></label>
+                    <input type="text" class="form-control" id="education_level" value="{{ profile.education_level }}" disabled>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="cast" class="form-label"><strong>Cast:</strong></label>
+                    <input type="text" class="form-control" id="cast" value="{{ profile.cast }}" disabled>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="disability" class="form-label"><strong>Disability:</strong></label>
+                    <input type="text" class="form-control" id="disability" value="{{ profile.disability }}" disabled>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="cgpa" class="form-label"><strong>CGPA:</strong></label>
+                    <input type="text" class="form-control" id="cgpa" value="{{ profile.cgpa }}" disabled>
+                </div>
+            {% endif %}
+            
+                {% if request.user.is_student %}
                 <a href="{% url 'user_edit'%}" class="btn btn-warning"> Edit</a>
                 {% endif %}
             </div>
         </div>
     </div>
-      <div class="col-3"></div>
+      <div class="col-2"></div>
     </div>
    </div>
 

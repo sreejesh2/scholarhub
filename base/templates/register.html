@@ -38,7 +38,8 @@
         $('#id_dob').datepicker({
             format: 'yyyy-mm-dd',
             autoclose: true,
-            todayHighlight: true
+            todayHighlight: true,
+            endDate: new Date(),  // Restricts selection to dates before or on today
         });
     });
 </script>

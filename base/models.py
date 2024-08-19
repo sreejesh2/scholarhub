@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.core.validators import MaxValueValidator
 import uuid
 from django.utils import timezone
 
@@ -35,7 +36,12 @@ class User(AbstractBaseUser):
     phone = models.CharField(max_length=15)
     dob = models.DateField(null=True,blank=True)
     email = models.EmailField(max_length=200, unique=True)
-    gender = models.CharField(max_length=20, blank=True, null=True)
+    GEN= (
+        ('male','Male'),
+        ('female','Female'),
+        ('other','Other')
+    )
+    gender = models.CharField(max_length=20, blank=True, null=True,choices=GEN)
     phone_verified = models.BooleanField(default=False)
     otp = models.CharField(max_length=6, blank=True, null=True)
     otp_created_at = models.DateTimeField(null=True, blank=True)
@@ -60,7 +66,7 @@ class User(AbstractBaseUser):
     DIS_OP=(('1','Yes'),
             ('0','No'),)
     disability =models.CharField(max_length=200,choices=DIS_OP,null=True,blank=True)
-    gpa = models.CharField(max_length=255,null=True,blank=True)
+    cgpa = models.FloatField(null=True, blank=True, validators=[MaxValueValidator(10.0)])
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['full_name', 'phone']
@@ -167,7 +173,7 @@ class ScholarShip(models.Model):
     DIS_OP=(('1','Yes'),
             ('0','No'),)
     disability =models.CharField(max_length=200,choices=DIS_OP,null=True,blank=True)
-    gpa = models.CharField(max_length=255,null=True,blank=True)
+    cgpa = models.FloatField(null=True, blank=True, validators=[MaxValueValidator(10.0)])
     
     def __str__(self):
         return f'{self.title} '

@@ -41,6 +41,11 @@ urlpatterns = [
     path('cental/state/approved/<int:s_id>/',views.state_approved_students_central,name='c_s_a'),
     path('adminp/rejected/',views.admin_rejected,name='admin_r'),
     path('adminp/approved/',views.admin_approved,name='admin_a'),
+    path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path('verify-otp/<int:pk>/', views.VerifyOTPViewFor.as_view(), name='verify_otpf'),
+    path('forgot/f-page/<int:pk>/',views.fpage,name='f-page'),
+    path('provider/change/password/',views.provider_password_reset,name='provider-reset-password'),
+    path('reset/password/<str:provider_id>/',views.provider_reset,name='reset_pass_pro'),
 
 
 

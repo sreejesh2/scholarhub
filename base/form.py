@@ -1,11 +1,19 @@
 from django import forms
 from .models import User ,ScholarShipProvider,ScholarShip,ApplyScholarShip,Student
 
+from datetime import date
+from django.core.exceptions import ValidationError
+
+def validate_dob(value):
+    if value >= date.today():
+        raise ValidationError("Date of birth cannot be today or a future date.")
+
 class UserForm(forms.ModelForm):
+
     class Meta:
         model = User
         fields = [
-            "full_name", "email", "phone", "address", "dob","password"
+            "full_name", "email", "phone", "address", "dob","password","gender"
         ]
         widgets = {
         
@@ -14,16 +22,21 @@ class UserForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter phone number'}),
             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter address'}),
             'dob': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'Select dob', 'id': 'id_dob', 'type': 'date'}),
-            'password': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter password'}),
+            'password': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter password','type': 'password'}),
+            'gender': forms.Select(choices=User.GEN, attrs={'class': 'form-control'}),
 
         }
+    def clean_dob(self):
+        dob = self.cleaned_data.get('dob')
+        validate_dob(dob)
+        return dob
 
 
 class StudentRegisterForm(forms.ModelForm):
     class Meta:
         model = User
         fields = [
-            "full_name", "email", "phone", "address", "dob","password","education_level","cast","disability","gpa"
+            "full_name", "email", "phone", "address", "dob","password","education_level","cast","disability","cgpa","gender"
         ]
         widgets = {
         
@@ -32,13 +45,18 @@ class StudentRegisterForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter phone number'}),
             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter address'}),
             'dob': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'Select dob', 'id': 'id_dob', 'type': 'date'}),
-            'password': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter password'}),
+            'password': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter password', 'type': 'password'}),
             'education_level': forms.Select(choices=ScholarShip.EDU_OP, attrs={'class': 'form-control'}),
             'cast': forms.Select(choices=ScholarShip.CAST_OP, attrs={'class': 'form-control'}),
             'disability': forms.Select(choices=ScholarShip.DIS_OP, attrs={'class': 'form-control'}),
-            'gpa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Gpa'}),
+            'cgpa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter CGpa'}),
+            'gender': forms.Select(choices=User.GEN, attrs={'class': 'form-control'}),
 
         }        
+    def clean_dob(self):
+        dob = self.cleaned_data.get('dob')
+        validate_dob(dob)
+        return dob
 
 
 
@@ -46,7 +64,7 @@ class StudentEditForm(forms.ModelForm):
     class Meta:
         model = User
         fields = [
-            "full_name", "email", "phone", "address", "dob","education_level","cast","disability","gpa"
+            "full_name", "email", "phone", "address", "dob","education_level","cast","disability","cgpa"
         ]
         widgets = {
         
@@ -58,7 +76,7 @@ class StudentEditForm(forms.ModelForm):
             'education_level': forms.Select(choices=ScholarShip.EDU_OP, attrs={'class': 'form-control'}),
             'cast': forms.Select(choices=ScholarShip.CAST_OP, attrs={'class': 'form-control'}),
             'disability': forms.Select(choices=ScholarShip.DIS_OP, attrs={'class': 'form-control'}),
-            'gpa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Gpa'}),
+            'cgpa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter CGpa'}),
 
         }        
 
@@ -149,7 +167,7 @@ class StudentIDForm(forms.Form):
 class ScholarShipForm(forms.ModelForm):
     class Meta:
         model = ScholarShip
-        fields = ["title","description","amount","start_date","end_date","education_level","cast","disability","gpa"]
+        fields = ["title","description","amount","start_date","end_date","education_level","cast","disability","cgpa"]
         widgets = {
             'education_level': forms.Select(choices=ScholarShip.EDU_OP, attrs={'class': 'form-control'}),
             'cast': forms.Select(choices=ScholarShip.CAST_OP, attrs={'class': 'form-control'}),

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block home %}
+<div class="container-fluid" style="margin-top: 150px; min-height: 50vh; ">
+    <div class="row justify-content-center pb-3">
+        <div class="col-md-6 pb-5 mb-5">
+            {% for msg in messages %}
+            {% if msg.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>{{msg}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% else %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>{{msg}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+            {% endfor %}
+            <h1 class="text-center my-5">Enter new Password</h1>
+            <div class="d-flex justify-content-center">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="password" name="pass1" style="text-decoration: none;" placeholder="Enter new password" class="form-control m-3 text-center">
+                        <input type="password" name="pass2" style="text-decoration: none;" placeholder="Enter Confirm password" class="form-control  m-3 text-center" >
+                
+                    <button type="submit" class="btn btn-primary btn-block mt-3">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock home %}
