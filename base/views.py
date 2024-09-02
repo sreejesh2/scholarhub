@@ -721,7 +721,7 @@ def recommendation(request):
             else:
                 exact_match = False
 
-            if request.user.gpa:
+            if request.user.cgpa:
                 filters &= Q(cgpa__lte=request.user.cgpa)
             else:
                 exact_match = False
@@ -1124,7 +1124,6 @@ def admin_approved(request):
         return redirect('login')  # Redirect non-staff users to login or some other appropriate view
     rq = ScholarShipProvider.objects.filter(status = 'A').order_by('-id')
     return render(request, 'admin_a.html', {"rq": rq})
-
 
 
 
