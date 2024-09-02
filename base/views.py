@@ -702,40 +702,31 @@ def recommendation(request):
         current_date = timezone.now().date()
 
         if request.user.is_student:
-            # Create a list of Q objects for filtering
+            # Initialize an empty Q object to accumulate filters
             filters = Q()
-            exact_match = True
 
+            # Add filters based on each user attribute
             if request.user.education_level:
-                filters &= Q(education_level=request.user.education_level)
-            else:
-                exact_match = False
+                filters |= Q(education_level=request.user.education_level)  # Use | to accumulate OR conditions
 
             if request.user.cast:
-                filters &= Q(cast=request.user.cast)
-            else:
-                exact_match = False
+                filters |= Q(cast=request.user.cast)
 
             if request.user.disability:
-                filters &= Q(disability=request.user.disability)
-            else:
-                exact_match = False
+                filters |= Q(disability=request.user.disability)
 
             if request.user.cgpa:
-                filters &= Q(cgpa__lte=request.user.cgpa)
-            else:
-                exact_match = False
+                filters |= Q(cgpa__lte=request.user.cgpa)
 
-            # Apply filters only if exact match is required
-            if exact_match:
+            # Apply the accumulated filters if any exist
+            if filters:
                 scholarships = scholarships.exclude(provider__provider_type='institution').filter(filters)
-            else:
-                scholarships = scholarships.none()  # No exact match found
+
+            print(scholarships, '=================')
 
         return render(request, 'recommendations.html', {'scholarships': scholarships, 'current_date': current_date})
     else:
         return render(request, 'login.html')
-
 
 
 @login_required(login_url='login')
